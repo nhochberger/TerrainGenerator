@@ -70,7 +70,7 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
 
         @Override
         public void mouseWheelMoved(final MouseWheelEvent e) {
-            final float stepSize = 0.05f;
+            final float stepSize = 0.05f * TerrainGeneratorMainFrame.this.visualization.getZoom();
             final int wheelRotation = e.getWheelRotation();
             final float zoom = TerrainGeneratorMainFrame.this.visualization.getZoom();
             if (stepSize >= zoom && 0 < wheelRotation) {

@@ -1,23 +1,35 @@
 package view;
 
 import java.nio.FloatBuffer;
+import java.util.Random;
 
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.glu.GLU;
-import com.jogamp.opengl.util.gl2.GLUT;
 
 public class TerrainVisualization implements GLEventListener {
 
+    private static final float INITIAL_ZOOM = 0.5f;
+    private static final int DIMENSION = 25;
     private final GLU glu;
     private float yAngle;
     private float xAngle;
-    private float zoom = 1f;
+    private float zoom = INITIAL_ZOOM;
+    private final float[][] points;
 
     public TerrainVisualization() {
         super();
         this.glu = new GLU();
+
+        final Random rand = new Random();
+        this.points = new float[DIMENSION][DIMENSION];
+        for (int x = 0; x < this.points.length; x++) {
+            for (int y = 0; y < this.points[0].length; y++) {
+                this.points[x][y] = rand.nextFloat() * 1.5f;
+                System.out.print(this.points[x][y] + ", ");
+            }
+        }
     }
 
     @Override
@@ -62,7 +74,12 @@ public class TerrainVisualization implements GLEventListener {
 
         drawCoordinates(gl);
 
-        final GLUT glut = new GLUT();
+        drawTerrain(gl);
+
+        gl.glFlush();
+    }
+
+    private void drawTerrain(final GL2 gl) {
         final float[] matShininess = { 50.0f };
         gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SHININESS, FloatBuffer.wrap(matShininess));
 
@@ -74,9 +91,21 @@ public class TerrainVisualization implements GLEventListener {
 
         final float[] matSpecular = { 1.0f, 1.0f, 1.0f, 1.0f };
         gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, FloatBuffer.wrap(matSpecular));
-        glut.glutSolidTeapot(1.2f);
 
-        gl.glFlush();
+        gl.glBegin(GL2.GL_QUADS);
+        for (int x = 0; x < this.points.length - 1; x++) {
+            for (int z = 0; z < this.points[0].length - 1; z++) {
+                gl.glNormal3f(x, this.points[x][z], z);
+                gl.glVertex3f(x, this.points[x][z], z);
+                gl.glNormal3f(x + 1, this.points[x + 1][z], z);
+                gl.glVertex3f(x + 1, this.points[x + 1][z], z);
+                gl.glNormal3f(x + 1, this.points[x + 1][z + 1], z + 1);
+                gl.glVertex3f(x + 1, this.points[x + 1][z + 1], z + 1);
+                gl.glNormal3f(x, this.points[x][z + 1], z + 1);
+                gl.glVertex3f(x, this.points[x][z + 1], z + 1);
+            }
+        }
+        gl.glEnd();
     }
 
     @Override
@@ -107,10 +136,10 @@ public class TerrainVisualization implements GLEventListener {
         final float[] diffuseLight = { 0.5f, 0.5f, 0.5f, 0f };
         gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, diffuseLight, 0);
 
-        final float[] specularLight = { 1.0f, 1.0f, 1.0f, 0f };
+        final float[] specularLight = { 1.0f, 1.0f, 1.0f, 1f };
         gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, specularLight, 0);
 
-        final float[] lightPosition = { 100.0f, 100.0f, 100.0f, 0.0f };
+        final float[] lightPosition = { 0.0f, 0.0f, 5000.0f, 1.0f };
         gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, FloatBuffer.wrap(lightPosition));
 
         gl.glEnable(GL2.GL_LIGHTING);
@@ -120,7 +149,7 @@ public class TerrainVisualization implements GLEventListener {
 
     private void drawCoordinates(final GL2 gl) {
         gl.glPushMatrix();
-        final float[] matShininess = { 0.0f };
+        final float[] matShininess = { 50.0f };
         gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SHININESS, FloatBuffer.wrap(matShininess));
 
         final float[] matDiffuse = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -163,18 +192,18 @@ public class TerrainVisualization implements GLEventListener {
     }
 
     public float getxAngle() {
-        return xAngle;
+        return this.xAngle;
     }
 
-    public void setxAngle(float xAngle) {
+    public void setxAngle(final float xAngle) {
         this.xAngle = xAngle;
     }
 
     public float getyAngle() {
-        return yAngle;
+        return this.yAngle;
     }
 
-    public void setyAngle(float yAngle) {
+    public void setyAngle(final float yAngle) {
         this.yAngle = yAngle;
     }
 }
