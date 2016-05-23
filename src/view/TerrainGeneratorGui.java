@@ -3,9 +3,12 @@ package view;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import controller.events.TerrainGeneratedEvent;
+import controller.events.TerrainGenerationProgressEvent;
 import hochberger.utilities.application.ApplicationShutdownEvent;
 import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.application.session.SessionBasedObject;
+import hochberger.utilities.eventbus.EventReceiver;
 import hochberger.utilities.gui.ApplicationGui;
 
 public class TerrainGeneratorGui extends SessionBasedObject implements ApplicationGui {
@@ -18,7 +21,7 @@ public class TerrainGeneratorGui extends SessionBasedObject implements Applicati
 
     @Override
     public void activate() {
-        this.mainFrame = new TerrainGeneratorMainFrame(session().getProperties().title());
+        this.mainFrame = new TerrainGeneratorMainFrame(session());
         this.mainFrame.show();
         this.mainFrame.addWindowListener(new WindowAdapter() {
             @Override
@@ -27,10 +30,36 @@ public class TerrainGeneratorGui extends SessionBasedObject implements Applicati
                 session().getEventBus().publishFromEDT(new ApplicationShutdownEvent());
             }
         });
+        session().getEventBus().register(new TerrainGenerationProgressForwarder(), TerrainGenerationProgressEvent.class);
+        session().getEventBus().register(new TerrainGeneratedEventForwarder(), TerrainGeneratedEvent.class);
     }
 
     @Override
     public void deactivate() {
         // TODO Auto-generated method stub
+    }
+
+    public class TerrainGeneratedEventForwarder implements EventReceiver<TerrainGeneratedEvent> {
+
+        public TerrainGeneratedEventForwarder() {
+            super();
+        }
+
+        @Override
+        public void receive(final TerrainGeneratedEvent event) {
+            TerrainGeneratorGui.this.mainFrame.setHeightMap(event.getHeightMap());
+        }
+    }
+
+    public class TerrainGenerationProgressForwarder implements EventReceiver<TerrainGenerationProgressEvent> {
+
+        public TerrainGenerationProgressForwarder() {
+            super();
+        }
+
+        @Override
+        public void receive(final TerrainGenerationProgressEvent event) {
+            TerrainGeneratorGui.this.mainFrame.setProgress(event.getProgressPercentage());
+        }
     }
 }

@@ -2,6 +2,8 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
@@ -10,6 +12,7 @@ import java.awt.event.WindowListener;
 
 import javax.swing.JButton;
 import javax.swing.JPanel;
+import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
 
 import com.jogamp.opengl.GLCapabilities;
@@ -17,15 +20,24 @@ import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.FPSAnimator;
 
+import controller.events.GenerateTerrainEvent;
+import edt.EDT;
+import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.gui.EDTSafeFrame;
+import hochberger.utilities.gui.lookandfeel.SetLookAndFeelTo;
+import hochberger.utilities.text.i18n.DirectI18N;
+import net.miginfocom.swing.MigLayout;
 
 public class TerrainGeneratorMainFrame extends EDTSafeFrame {
 
     private final FPSAnimator animator;
     private TerrainVisualization visualization;
+    private JProgressBar progressBar;
+    private final BasicSession session;
 
-    public TerrainGeneratorMainFrame(final String title) {
-        super(title);
+    public TerrainGeneratorMainFrame(final BasicSession session) {
+        super(session.getProperties().title());
+        this.session = session;
         this.animator = new FPSAnimator(60);
     }
 
@@ -34,12 +46,13 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
         setSize(1000, 1000);
         center();
         disposeOnClose();
+        SetLookAndFeelTo.systemLookAndFeel();
         setContentPane(new JPanel(new BorderLayout()));
         final JPanel controllPanel = new JPanel();
         controllPanel.add(new JButton("Show/hide coordinates"));
-        controllPanel.add(new JButton("Regenerate terrain"));
+        controllPanel.add(generateTerrainButton());
         controllPanel.add(new JButton("Reset zoom"));
-        controllPanel.add(new JButton("Rest rotation"));
+        controllPanel.add(new JButton("Reset rotation"));
         controllPanel.setBackground(Color.BLACK);
         getContentPane().add(controllPanel, BorderLayout.NORTH);
         final GLProfile glp = GLProfile.getDefault();
@@ -56,6 +69,22 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
         final RotationListener rotationListener = new RotationListener();
         canvas.addMouseListener(rotationListener);
         canvas.addMouseMotionListener(rotationListener);
+        final JPanel progressPanel = new JPanel(new MigLayout("", "[grow]", "[grow]"));
+        this.progressBar = new JProgressBar(0, 100);
+        progressPanel.add(this.progressBar, "grow");
+        getContentPane().add(progressPanel, BorderLayout.SOUTH);
+    }
+
+    private JButton generateTerrainButton() {
+        final JButton result = new JButton(new DirectI18N("Regenerate terrain").toString());
+        result.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                TerrainGeneratorMainFrame.this.session.getEventBus().publishFromEDT(new GenerateTerrainEvent());
+            }
+        });
+        return result;
     }
 
     public void addWindowListener(final WindowListener listener) {
@@ -86,9 +115,6 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
 
         @Override
         public void mousePressed(final MouseEvent e) {
-            if (!SwingUtilities.isLeftMouseButton(e)) {
-                return;
-            }
             super.mousePressed(e);
             this.x = e.getX();
             this.y = e.getY();
@@ -96,12 +122,45 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
 
         @Override
         public void mouseDragged(final MouseEvent e) {
+            super.mouseDragged(e);
+            rotation(e);
+            translation(e);
+        }
+
+        private void translation(final MouseEvent e) {
+            if (!SwingUtilities.isRightMouseButton(e)) {
+                return;
+            }
+            TerrainGeneratorMainFrame.this.visualization.setxTranslation(TerrainGeneratorMainFrame.this.visualization.getxTranslation() + (Math.signum((e.getX() - this.x)) * 0.01f));
+            TerrainGeneratorMainFrame.this.visualization.setyTranslation(TerrainGeneratorMainFrame.this.visualization.getyTranslation() + (Math.signum((e.getY() - this.y)) * 0.01f));
+        }
+
+        private void rotation(final MouseEvent e) {
             if (!SwingUtilities.isLeftMouseButton(e)) {
                 return;
             }
-            super.mouseDragged(e);
             TerrainGeneratorMainFrame.this.visualization.setyAngle(((e.getX() - this.x) * 0.5f) % 360);
             TerrainGeneratorMainFrame.this.visualization.setxAngle(((e.getY() - this.y) * 0.5f) % 360);
         }
+    }
+
+    public void setHeightMap(final float[][] heightMap) {
+        EDT.performBlocking(new Runnable() {
+
+            @Override
+            public void run() {
+                TerrainGeneratorMainFrame.this.visualization.setPoints(heightMap);
+            }
+        });
+    }
+
+    public void setProgress(final int percentage) {
+        EDT.performBlocking(new Runnable() {
+
+            @Override
+            public void run() {
+                TerrainGeneratorMainFrame.this.progressBar.setValue(percentage);
+            }
+        });
     }
 }

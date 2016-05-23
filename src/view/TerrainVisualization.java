@@ -1,7 +1,6 @@
 package view;
 
 import java.nio.FloatBuffer;
-import java.util.Random;
 
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -10,26 +9,20 @@ import com.jogamp.opengl.glu.GLU;
 
 public class TerrainVisualization implements GLEventListener {
 
-    private static final float INITIAL_ZOOM = 0.5f;
-    private static final int DIMENSION = 25;
+    private static final float INITIAL_ZOOM = 0.1f;
+    // private static final int DIMENSION = 100;
     private final GLU glu;
     private float yAngle;
     private float xAngle;
+    private float xTranslation;
+    private float yTranslation;
     private float zoom = INITIAL_ZOOM;
-    private final float[][] points;
+    private float[][] points;
 
     public TerrainVisualization() {
         super();
         this.glu = new GLU();
-
-        final Random rand = new Random();
-        this.points = new float[DIMENSION][DIMENSION];
-        for (int x = 0; x < this.points.length; x++) {
-            for (int y = 0; y < this.points[0].length; y++) {
-                this.points[x][y] = rand.nextFloat() * 1.5f;
-                System.out.print(this.points[x][y] + ", ");
-            }
-        }
+        this.points = new float[0][0];
     }
 
     @Override
@@ -47,7 +40,6 @@ public class TerrainVisualization implements GLEventListener {
     @Override
     public void dispose(final GLAutoDrawable drawable) {
         // TODO Auto-generated method stub
-
     }
 
     @Override
@@ -58,16 +50,14 @@ public class TerrainVisualization implements GLEventListener {
 
     private void update() {
         // TODO Auto-generated method stub
-
     }
 
     private void render(final GLAutoDrawable drawable) {
         final GL2 gl = drawable.getGL().getGL2();
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
         gl.glLoadIdentity();
-        gl.glTranslatef(0f, 0f, -5.0f);
 
-        // Rotate The Cube On X, Y & Z
+        gl.glTranslatef(-2.0f, 0f, -15.0f);
         gl.glRotatef(this.getxAngle(), 1.0f, 0.0f, 0.0f);
         gl.glRotatef(this.getyAngle(), 0.0f, 1.0f, 0.0f);
         gl.glScaled(this.getZoom(), this.getZoom(), this.getZoom());
@@ -206,4 +196,25 @@ public class TerrainVisualization implements GLEventListener {
     public void setyAngle(final float yAngle) {
         this.yAngle = yAngle;
     }
+
+    public float getxTranslation() {
+        return this.xTranslation;
+    }
+
+    public void setxTranslation(final float xTranslation) {
+        this.xTranslation = xTranslation;
+    }
+
+    public float getyTranslation() {
+        return this.yTranslation;
+    }
+
+    public void setyTranslation(final float yTranslation) {
+        this.yTranslation = yTranslation;
+    }
+
+    public void setPoints(final float[][] points) {
+        this.points = points;
+    }
+
 }
