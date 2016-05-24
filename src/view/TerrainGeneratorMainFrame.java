@@ -61,7 +61,7 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
         this.visualization = new TerrainVisualization();
         canvas.addGLEventListener(this.visualization);
         final JPanel test = new JPanel();
-        test.setBackground(Color.black);
+        test.setBackground(Color.BLACK);
         getContentPane().add(canvas, BorderLayout.CENTER);
         this.animator.add(canvas);
         this.animator.start();
@@ -76,7 +76,7 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
     }
 
     private JButton generateTerrainButton() {
-        final JButton result = new JButton(new DirectI18N("Regenerate terrain").toString());
+        final JButton result = new JButton(new DirectI18N("Generate terrain").toString());
         result.addActionListener(new ActionListener() {
 
             @Override

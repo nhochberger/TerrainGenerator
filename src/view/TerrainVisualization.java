@@ -57,11 +57,12 @@ public class TerrainVisualization implements GLEventListener {
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
         gl.glLoadIdentity();
 
-        gl.glTranslatef(-2.0f, 0f, -15.0f);
+        gl.glTranslatef(0f, 0f, -15.0f);
         gl.glRotatef(this.getxAngle(), 1.0f, 0.0f, 0.0f);
         gl.glRotatef(this.getyAngle(), 0.0f, 1.0f, 0.0f);
         gl.glScaled(this.getZoom(), this.getZoom(), this.getZoom());
 
+        gl.glTranslatef(-this.points.length / 2, 0f, -this.points.length / 4);
         drawCoordinates(gl);
 
         drawTerrain(gl);
@@ -70,6 +71,7 @@ public class TerrainVisualization implements GLEventListener {
     }
 
     private void drawTerrain(final GL2 gl) {
+        gl.glPushMatrix();
         final float[] matShininess = { 50.0f };
         gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SHININESS, FloatBuffer.wrap(matShininess));
 
@@ -96,6 +98,7 @@ public class TerrainVisualization implements GLEventListener {
             }
         }
         gl.glEnd();
+        gl.glPopMatrix();
     }
 
     @Override
@@ -129,7 +132,7 @@ public class TerrainVisualization implements GLEventListener {
         final float[] specularLight = { 1.0f, 1.0f, 1.0f, 1f };
         gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, specularLight, 0);
 
-        final float[] lightPosition = { 0.0f, 0.0f, 5000.0f, 1.0f };
+        final float[] lightPosition = { 5000.0f, -50000.0f, 5000.0f, 0f };
         gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, FloatBuffer.wrap(lightPosition));
 
         gl.glEnable(GL2.GL_LIGHTING);
