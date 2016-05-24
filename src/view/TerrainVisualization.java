@@ -10,7 +10,6 @@ import com.jogamp.opengl.glu.GLU;
 public class TerrainVisualization implements GLEventListener {
 
     private static final float INITIAL_ZOOM = 0.1f;
-    // private static final int DIMENSION = 100;
     private final GLU glu;
     private float yAngle;
     private float xAngle;
@@ -56,17 +55,18 @@ public class TerrainVisualization implements GLEventListener {
         final GL2 gl = drawable.getGL().getGL2();
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
         gl.glLoadIdentity();
-
+        gl.glPushMatrix();
         gl.glTranslatef(0f, 0f, -15.0f);
+        gl.glScaled(this.getZoom(), this.getZoom(), this.getZoom());
+        gl.glTranslatef(-this.points.length / 2, 0f, -this.points.length / 4);
+        gl.glTranslatef(this.xTranslation, this.yTranslation, 0f);
         gl.glRotatef(this.getxAngle(), 1.0f, 0.0f, 0.0f);
         gl.glRotatef(this.getyAngle(), 0.0f, 1.0f, 0.0f);
-        gl.glScaled(this.getZoom(), this.getZoom(), this.getZoom());
 
-        gl.glTranslatef(-this.points.length / 2, 0f, -this.points.length / 4);
         drawCoordinates(gl);
 
         drawTerrain(gl);
-
+        gl.glPopMatrix();
         gl.glFlush();
     }
 
@@ -218,6 +218,10 @@ public class TerrainVisualization implements GLEventListener {
 
     public void setPoints(final float[][] points) {
         this.points = points;
+        if (0 >= points.length) {
+            this.zoom = INITIAL_ZOOM;
+        }
+        this.zoom = 7f / points.length;
     }
 
 }
