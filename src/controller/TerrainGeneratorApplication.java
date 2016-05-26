@@ -7,14 +7,14 @@ import hochberger.utilities.application.ApplicationShutdownEventReceiver;
 import hochberger.utilities.application.BasicLoggedApplication;
 import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.eventbus.SimpleEventBus;
-import model.HeightMapGenerator;
+import model.CompletelyRandomGenerator;
 import view.TerrainGeneratorGui;
 
 public class TerrainGeneratorApplication extends BasicLoggedApplication {
 
     private final BasicSession session;
     private final TerrainGeneratorGui gui;
-    private final HeightMapGenerator generator;
+    private final CompletelyRandomGenerator generator;
 
     public static void main(final String[] args) {
         setUpLoggingServices(TerrainGeneratorApplication.class);
@@ -31,7 +31,7 @@ public class TerrainGeneratorApplication extends BasicLoggedApplication {
     public TerrainGeneratorApplication(final ApplicationProperties applicationProperties) {
         this.session = new BasicSession(applicationProperties, new SimpleEventBus(), getLogger());
         this.gui = new TerrainGeneratorGui(this.session);
-        this.generator = new HeightMapGenerator(this.session);
+        this.generator = new CompletelyRandomGenerator(this.session);
     }
 
     @Override

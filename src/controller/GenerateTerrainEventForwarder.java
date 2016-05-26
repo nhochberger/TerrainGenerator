@@ -5,13 +5,13 @@ import controller.events.TerrainGeneratedEvent;
 import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.application.session.SessionBasedObject;
 import hochberger.utilities.eventbus.EventReceiver;
-import model.HeightMapGenerator;
+import model.CompletelyRandomGenerator;
 
 public class GenerateTerrainEventForwarder extends SessionBasedObject implements EventReceiver<GenerateTerrainEvent> {
 
-    private final HeightMapGenerator generator;
+    private final CompletelyRandomGenerator generator;
 
-    protected GenerateTerrainEventForwarder(final BasicSession session, final HeightMapGenerator generator) {
+    protected GenerateTerrainEventForwarder(final BasicSession session, final CompletelyRandomGenerator generator) {
         super(session);
         this.generator = generator;
     }
