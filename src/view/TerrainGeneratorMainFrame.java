@@ -132,22 +132,14 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
 	}
 
 	public class RotationTranslationListener extends MouseAdapter {
-		private int leftClickX;
-		private int leftClickY;
-		private int rightClickX;
-		private int rightClickY;
+		private int oldX;
+		private int oldY;
 
 		@Override
 		public void mousePressed(final MouseEvent e) {
 			super.mousePressed(e);
-			if (SwingUtilities.isLeftMouseButton(e)) {
-				this.leftClickX = e.getX();
-				this.leftClickY = e.getY();
-			}
-			if (SwingUtilities.isRightMouseButton(e)) {
-				this.rightClickX = e.getX();
-				this.rightClickY = e.getY();
-			}
+			this.oldX = e.getX();
+			this.oldY = e.getY();
 		}
 
 		@Override
@@ -161,16 +153,24 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
 			if (!SwingUtilities.isRightMouseButton(e)) {
 				return;
 			}
-			TerrainGeneratorMainFrame.this.visualization.setxTranslation((e.getX() - this.rightClickX) * 0.1f);
-			TerrainGeneratorMainFrame.this.visualization.setyTranslation(-(e.getY() - this.rightClickY) * 0.1f);
+			int newX = e.getX();
+			int newY = e.getY();
+			TerrainGeneratorMainFrame.this.visualization.setxTranslation(TerrainGeneratorMainFrame.this.visualization.getxTranslation() + (newX - this.oldX) * 0.3f);
+			TerrainGeneratorMainFrame.this.visualization.setyTranslation(TerrainGeneratorMainFrame.this.visualization.getyTranslation() - (newY - this.oldY) * 0.3f);
+			this.oldX = newX;
+			this.oldY = newY;
 		}
 
 		private void rotation(final MouseEvent e) {
 			if (!SwingUtilities.isLeftMouseButton(e)) {
 				return;
 			}
-			TerrainGeneratorMainFrame.this.visualization.setxAngle(((e.getY() - this.leftClickY) * 1f) % 360);
-			TerrainGeneratorMainFrame.this.visualization.setyAngle(((e.getX() - this.leftClickX) * 1f) % 360);
+			int newX = e.getX();
+			int newY = e.getY();
+			TerrainGeneratorMainFrame.this.visualization.setxAngle(TerrainGeneratorMainFrame.this.visualization.getxAngle() + (newY - this.oldY) * 0.3f);
+			TerrainGeneratorMainFrame.this.visualization.setyAngle(TerrainGeneratorMainFrame.this.visualization.getyAngle() + (newX - this.oldX) * 0.3f);
+			this.oldX = newX;
+			this.oldY = newY;
 		}
 	}
 }
