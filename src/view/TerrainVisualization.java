@@ -123,10 +123,10 @@ public class TerrainVisualization implements GLEventListener {
 		gl.glClearColor(0f, 0f, 0f, 0f);
 		gl.glShadeModel(GL2.GL_SMOOTH);
 
-		final float[] ambientLight = { 0.2f, 0.2f, 0.2f, 0f };
+		final float[] ambientLight = { 0.2f, 0.4f, 0.2f, 0f };
 		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, ambientLight, 0);
 
-		final float[] diffuseLight = { 0.5f, 0.5f, 0.5f, 0f };
+		final float[] diffuseLight = { 0.4f, 0.7f, 0.5f, 0f };
 		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, diffuseLight, 0);
 
 		final float[] specularLight = { 1.0f, 1.0f, 1.0f, 1f };

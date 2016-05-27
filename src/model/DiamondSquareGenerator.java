@@ -39,38 +39,58 @@ public class DiamondSquareGenerator extends SessionBasedObject implements Height
 	@Override
 	public float[][] generate(final int dimension, final float roughness) {
 		this.roughness = roughness;
-		logger().info("Staring terrain generation. Dimension: " + dimension + ", roughness: " + roughness);
+		logger().info("Starting terrain generation. Dimension: " + dimension + ", roughness: " + roughness);
 		this.dimension = dimension;
-		this.heightMap = new float[dimension][dimension];
-		for (int i = 0; i < dimension; i++) {
+		this.heightMap = new float[this.dimension][this.dimension];
+		for (int i = 0; i < this.dimension; i++) {
 			this.heightMap[0][i] = 0;
 			this.heightMap[dimension - 1][i] = 0;
 			this.heightMap[i][0] = 0;
 			this.heightMap[i][dimension - 1] = 0;
 		}
 		this.rand = new Random();
-		int step = 1;
-		refine(step);
+		refine(dimension, 1);
+		logger().info("Terrain generation finished");
 		return this.heightMap;
 	}
 
-	private void refine(int step) {
-		System.err.println("refining step " + step);
-		step++;
-		int delta = this.dimension / step;
-		System.err.println(delta);
-		if (0 == delta) {
+	private void refine(final int size, int step) {
+		int half = size / 2;
+		if (1 > half) {
 			return;
 		}
-		for (int x = delta; x < this.dimension - 1; x += delta) {
-			for (int z = delta; z < this.dimension - 1; z += delta) {
-				this.heightMap[x][z] = (float) (this.rand.nextGaussian() * this.roughness * 10f / step);
-				System.err.println("[" + x + "][" + z + "] = " + this.heightMap[x][z]);
+		for (int x = half; x < this.dimension - 1; x += half) {
+			for (int z = half; z < this.dimension - 1; z += half) {
+				diamond(x, z, half, step);
+				square(x, z, half, step);
 			}
-			final int percentage = (100 * (step + 1) / (this.dimension + 1));
-			logger().info("Terrain generation at " + percentage + "%");
-			session().getEventBus().publish(new TerrainGenerationProgressEvent(percentage));
+			session().getEventBus().publish(new TerrainGenerationProgressEvent(101 - (int) (100 * ((float) size) / this.dimension)));
 		}
-		refine(step);
+		refine(half, ++step);
+	}
+
+	private void square(final int x, final int z, final int delta, final int step) {
+		float averageOfCorners = average(this.heightMap[x - delta][z], this.heightMap[x][z - delta], this.heightMap[x + delta][z], this.heightMap[x][z + delta]);
+		double offset = this.rand.nextGaussian() * step * this.roughness * Math.pow(2d, -step);
+		this.heightMap[x][z] += (float) (averageOfCorners + offset);
+		System.err.println(offset + " + " + this.heightMap[x][z]);
+	}
+
+	private void diamond(final int x, final int z, final int delta, final int step) {
+		float averageOfCorners = average(this.heightMap[x - delta][z - delta], this.heightMap[x - delta][z + delta], this.heightMap[x + delta][z + delta], this.heightMap[x + delta][z - delta]);
+		double offset = this.rand.nextGaussian() * step * this.roughness * Math.pow(2d, -step);
+		this.heightMap[x][z] += (float) (averageOfCorners + offset);
+		System.err.println(offset + " + " + this.heightMap[x][z]);
+	}
+
+	private float average(final float... args) {
+		float sum = 0;
+		if (0 == args.length) {
+			return 0f;
+		}
+		for (float current : args) {
+			sum += current;
+		}
+		return sum / args.length;
 	}
 }
