@@ -58,10 +58,10 @@ public class TerrainVisualization implements GLEventListener {
         gl.glPushMatrix();
         gl.glTranslatef(0f, 0f, -15.0f);
         gl.glScaled(this.getZoom(), this.getZoom(), this.getZoom());
-        gl.glTranslatef(-this.points.length / 2, 0f, -this.points.length / 4);
-        gl.glTranslatef(this.xTranslation, this.yTranslation, 0f);
         gl.glRotatef(this.getxAngle(), 1.0f, 0.0f, 0.0f);
         gl.glRotatef(this.getyAngle(), 0.0f, 1.0f, 0.0f);
+        gl.glTranslatef(-this.points.length / 2, 0f, -this.points.length / 2);
+        gl.glTranslatef(this.xTranslation, this.yTranslation, 0f);
 
         drawCoordinates(gl);
 
@@ -72,7 +72,7 @@ public class TerrainVisualization implements GLEventListener {
 
     private void drawTerrain(final GL2 gl) {
         gl.glPushMatrix();
-        final float[] matShininess = { 50.0f };
+        final float[] matShininess = { 25.0f };
         gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SHININESS, FloatBuffer.wrap(matShininess));
 
         final float[] matAmbient = { 0.2f, 0.2f, 0.2f, 0.0f };
