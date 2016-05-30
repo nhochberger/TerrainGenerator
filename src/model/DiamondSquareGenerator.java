@@ -51,7 +51,17 @@ public class DiamondSquareGenerator extends SessionBasedObject implements Height
 		this.rand = new Random();
 		refine(dimension, 1);
 		logger().info("Terrain generation finished");
+		printHeightMap();
 		return this.heightMap;
+	}
+
+	private void printHeightMap() {
+		for (int x = 0; x < this.dimension; x++) {
+			for (int y = 0; y < this.dimension; y++) {
+				System.err.print(this.heightMap[x][y] + "\t");
+			}
+			System.err.print("\n\n");
+		}
 	}
 
 	private void refine(final int size, int step) {
@@ -59,26 +69,33 @@ public class DiamondSquareGenerator extends SessionBasedObject implements Height
 		if (1 > half) {
 			return;
 		}
-		for (int x = half; x < this.dimension - 1; x += half) {
-			for (int z = half; z < this.dimension - 1; z += half) {
-				diamond(x, z, half, step);
+		for (int x = half; x < this.dimension - 1; x += 2 * half) {
+			for (int z = half; z < this.dimension - 1; z += 2 * half) {
 				square(x, z, half, step);
 			}
-			session().getEventBus().publish(new TerrainGenerationProgressEvent(101 - (int) (100 * ((float) size) / this.dimension)));
 		}
+		for (int x = 0; x < this.dimension - 1; x += 2 * half) {
+			for (int z = (x + half) % size; z < this.dimension - 1; z += 2 * half) {
+				diamond(x, z, half, step);
+			}
+		}
+		session().getEventBus().publish(new TerrainGenerationProgressEvent(101 - (int) (100 * ((float) size) / this.dimension)));
 		refine(half, ++step);
 	}
 
 	private void square(final int x, final int z, final int delta, final int step) {
+		// this.heightMap[x][z] += 1;
 		float averageOfCorners = average(this.heightMap[x - delta][z], this.heightMap[x][z - delta], this.heightMap[x + delta][z], this.heightMap[x][z + delta]);
-		double offset = this.rand.nextGaussian() * step * this.roughness * Math.pow(2d, -step);
+		double offset = this.rand.nextGaussian() * step * this.roughness * delta * Math.pow(2d, -step);
 		this.heightMap[x][z] += (float) (averageOfCorners + offset);
 		System.err.println(offset + " + " + this.heightMap[x][z]);
 	}
 
 	private void diamond(final int x, final int z, final int delta, final int step) {
-		float averageOfCorners = average(this.heightMap[x - delta][z - delta], this.heightMap[x - delta][z + delta], this.heightMap[x + delta][z + delta], this.heightMap[x + delta][z - delta]);
-		double offset = this.rand.nextGaussian() * step * this.roughness * Math.pow(2d, -step);
+		// this.heightMap[x][z] += 1;
+		float averageOfCorners = average(this.heightMap[Math.abs(x - delta)][Math.abs(z - delta)], this.heightMap[Math.abs(x - delta)][Math.abs(z + delta)],
+				this.heightMap[Math.abs(x + delta)][Math.abs(z + delta)], this.heightMap[Math.abs(x + delta)][Math.abs(z - delta)]);
+		double offset = this.rand.nextGaussian() * step * this.roughness * delta * Math.pow(2d, -step);
 		this.heightMap[x][z] += (float) (averageOfCorners + offset);
 		System.err.println(offset + " + " + this.heightMap[x][z]);
 	}
