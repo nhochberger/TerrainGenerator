@@ -5,6 +5,7 @@ import java.util.Random;
 import controller.events.TerrainGenerationProgressEvent;
 import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.application.session.SessionBasedObject;
+import hochberger.utilities.timing.Sleeper;
 
 /**
  * Generates random fractal terrains assuming corners and edges as predefined to a height of zero.
@@ -43,7 +44,7 @@ public class DiamondSquareGenerator extends SessionBasedObject implements Height
             this.heightMap[i][dimension - 1] = 0;
         }
         this.rand = new Random();
-        refine(dimension - 1, 1);
+        refine(dimension - 1, 0);
         logger().info("Terrain generation finished");
         // printHeightMap();
         return this.heightMap;
@@ -74,24 +75,45 @@ public class DiamondSquareGenerator extends SessionBasedObject implements Height
             }
         }
         session().getEventBus().publish(new TerrainGenerationProgressEvent(101 - (int) (100 * ((float) size) / this.dimension)));
+        // session().getEventBus().publish(new TerrainGeneratedEvent(this.heightMap));
+        Sleeper.sleep(100);
         refine(half, ++step);
     }
 
     private void square(final int x, final int z, final int delta, final int step) {
-        this.heightMap[x][z] += 1;
-        // final float averageOfCorners = average(this.heightMap[x - delta][z], this.heightMap[x][z - delta], this.heightMap[x + delta][z], this.heightMap[x][z + delta]);
-        // final double offset = this.rand.nextGaussian() * this.roughness * delta * Math.pow(2d, -step);
-        // this.heightMap[x][z] += (float) (averageOfCorners + offset);
-        // System.err.println(offset + " + " + this.heightMap[x][z]);
+        final float averageOfCorners = average(this.heightMap[x - delta][z - delta], this.heightMap[x + delta][z - delta], this.heightMap[x + delta][z + delta], this.heightMap[x - delta][z + delta]);
+        final double offset = this.rand.nextGaussian() * (this.roughness * delta);
+        this.heightMap[x][z] = (float) (averageOfCorners + offset);
+        // System.err.println("[" + step + "]" + averageOfCorners + " + " + offset + " = " + this.heightMap[x][z]);
     }
 
     private void diamond(final int x, final int z, final int delta, final int step) {
-        this.heightMap[x][z] += 1;
-        // final float averageOfCorners = average(this.heightMap[Math.abs(x - delta)][Math.abs(z - delta)], this.heightMap[Math.abs(x - delta)][Math.abs(z + delta)],
-        // this.heightMap[Math.abs(x + delta)][Math.abs(z + delta)], this.heightMap[Math.abs(x + delta)][Math.abs(z - delta)]);
-        // final double offset = this.rand.nextGaussian() * this.roughness * delta * Math.pow(2d, -step);
-        // this.heightMap[x][z] += (float) (averageOfCorners + offset);
-        // System.err.println(offset + " + " + this.heightMap[x][z]);
+        final float averageOfCorners = calculateDiamondAveragesFor(x, z, delta);
+        final double offset = this.rand.nextGaussian() * (this.roughness * delta);
+        this.heightMap[x][z] = (float) (averageOfCorners + offset);
+        // System.err.println("<" + step + ">" + averageOfCorners + " + " + offset + " = " + this.heightMap[x][z]);
+    }
+
+    private float calculateDiamondAveragesFor(final int x, final int z, final int delta) {
+        float sum = 0f;
+        int numberOfSummands = 0;
+        if (0 <= x - delta) {
+            sum += this.heightMap[x - delta][z];
+            numberOfSummands++;
+        }
+        if (this.dimension > x + delta) {
+            sum += this.heightMap[x + delta][z];
+            numberOfSummands++;
+        }
+        if (0 <= z - delta) {
+            sum += this.heightMap[x][z - delta];
+            numberOfSummands++;
+        }
+        if (this.dimension > z + delta) {
+            sum += this.heightMap[x][z + delta];
+            numberOfSummands++;
+        }
+        return sum / numberOfSummands;
     }
 
     private float average(final float... args) {
