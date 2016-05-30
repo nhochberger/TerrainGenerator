@@ -2,11 +2,9 @@ package model;
 
 import java.util.Random;
 
-import controller.events.TerrainGeneratedEvent;
 import controller.events.TerrainGenerationProgressEvent;
 import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.application.session.SessionBasedObject;
-import hochberger.utilities.timing.Sleeper;
 
 /**
  * Generates random fractal terrains assuming corners and edges as predefined to a height of zero.
@@ -66,8 +64,6 @@ public class DiamondSquareGenerator extends SessionBasedObject implements Height
             }
         }
         session().getEventBus().publish(new TerrainGenerationProgressEvent(101 - (int) (100 * ((float) size) / this.dimension)));
-        session().getEventBus().publish(new TerrainGeneratedEvent(this.heightMap));
-        Sleeper.sleep(500);
         refine(half, ++step);
     }
 
