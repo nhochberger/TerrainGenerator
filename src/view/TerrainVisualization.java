@@ -82,10 +82,10 @@ public class TerrainVisualization implements GLEventListener {
         final float[] matAmbient = { 0.2f, 0.2f, 0.2f, 0.0f };
         gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, FloatBuffer.wrap(matAmbient));
 
-        final float[] matDiffuse = { 0.87f, 0.72f, 0.53f, 1.0f };
+        final float[] matDiffuse = { 0.7f, 0.6f, 0.4f, 1.0f };
         gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, FloatBuffer.wrap(matDiffuse));
 
-        final float[] matSpecular = { 1.0f, 1.0f, 1.0f, 1.0f };
+        final float[] matSpecular = { 0.3f, 0.3f, 0.3f, 1.0f };
         gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, FloatBuffer.wrap(matSpecular));
 
         gl.glBegin(GL2.GL_QUADS);
