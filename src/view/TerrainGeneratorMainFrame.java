@@ -11,6 +11,7 @@ import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowListener;
 
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.SwingUtilities;
@@ -24,8 +25,12 @@ import controller.events.GenerateTerrainEvent;
 import edt.EDT;
 import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.gui.EDTSafeFrame;
+import hochberger.utilities.gui.input.SelfHighlightningValidatingTextField;
+import hochberger.utilities.gui.input.ValidatingTextField;
+import hochberger.utilities.gui.input.validator.InputValidator;
 import hochberger.utilities.gui.lookandfeel.SetLookAndFeelTo;
 import hochberger.utilities.text.i18n.DirectI18N;
+import hochberger.utilities.threading.ThreadRunner;
 import net.miginfocom.swing.MigLayout;
 
 public class TerrainGeneratorMainFrame extends EDTSafeFrame {
@@ -34,6 +39,8 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
     private TerrainVisualization visualization;
     private JProgressBar progressBar;
     private final BasicSession session;
+    private ValidatingTextField dimensionTextField;
+    private ValidatingTextField roughnessTextField;
 
     public TerrainGeneratorMainFrame(final BasicSession session) {
         super(session.getProperties().title());
@@ -48,12 +55,7 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
         disposeOnClose();
         SetLookAndFeelTo.systemLookAndFeel();
         setContentPane(new JPanel(new BorderLayout()));
-        final JPanel controllPanel = new JPanel();
-        controllPanel.add(new JButton("Show/hide coordinates"));
-        controllPanel.add(generateTerrainButton());
-        controllPanel.add(new JButton("Reset zoom"));
-        controllPanel.add(new JButton("Reset rotation"));
-        controllPanel.setBackground(Color.BLACK);
+        final JPanel controllPanel = controllPanel();
         getContentPane().add(controllPanel, BorderLayout.NORTH);
         final GLProfile glp = GLProfile.getDefault();
         final GLCapabilities caps = new GLCapabilities(glp);
@@ -75,13 +77,82 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
         getContentPane().add(progressPanel, BorderLayout.SOUTH);
     }
 
+    private JPanel controllPanel() {
+        final JPanel generationPanel = generationPanel();
+
+        // controllPanel.add(new JButton("Show/hide coordinates"));
+        // controllPanel.add(new JButton("Reset zoom"));
+        // controllPanel.add(new JButton("Reset rotation"));
+
+        final JPanel controllPanel = new JPanel();
+        controllPanel.setBackground(Color.BLACK);
+
+        controllPanel.add(generationPanel);
+        return controllPanel;
+    }
+
+    private JPanel generationPanel() {
+        final JPanel generationPanel = new JPanel();
+        generationPanel.setOpaque(false);
+        this.dimensionTextField = new SelfHighlightningValidatingTextField("513", 4);
+        this.dimensionTextField.addValidator(new InputValidator<String>() {
+
+            @Override
+            public boolean isValid(final String input) {
+                try {
+                    Integer.parseInt(input);
+                } catch (final NumberFormatException e) {
+                    return false;
+                }
+                final int parsedInput = Integer.parseInt(input);
+                final int n = parsedInput - 1;
+                return 0 == (n & (n - 1));
+            }
+        });
+        final JLabel dimensionLabel = new JLabel(new DirectI18N("Dimension: ").toString());
+        dimensionLabel.setForeground(Color.WHITE);
+        generationPanel.add(dimensionLabel);
+        generationPanel.add(this.dimensionTextField);
+        this.roughnessTextField = new SelfHighlightningValidatingTextField("0.2", 4);
+        this.roughnessTextField.addValidator(new InputValidator<String>() {
+
+            @Override
+            public boolean isValid(final String input) {
+                try {
+                    Float.parseFloat(input);
+                } catch (final NumberFormatException e) {
+                    return false;
+                }
+                final float parsedInput = Float.parseFloat(input);
+                return 0 <= parsedInput && 1 >= parsedInput;
+            }
+        });
+        final JLabel roughnessLabel = new JLabel(new DirectI18N("Roughness: ").toString());
+        roughnessLabel.setForeground(Color.WHITE);
+        generationPanel.add(roughnessLabel);
+        generationPanel.add(this.roughnessTextField);
+        generationPanel.add(generateTerrainButton());
+        return generationPanel;
+    }
+
     private JButton generateTerrainButton() {
         final JButton result = new JButton(new DirectI18N("Generate terrain").toString());
         result.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(final ActionEvent e) {
-                TerrainGeneratorMainFrame.this.session.getEventBus().publishFromEDT(new GenerateTerrainEvent());
+                ThreadRunner.startThread(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        if (!(TerrainGeneratorMainFrame.this.dimensionTextField.isValid() && TerrainGeneratorMainFrame.this.roughnessTextField.isValid())) {
+                            return;
+                        }
+                        final int dimension = Integer.parseInt(TerrainGeneratorMainFrame.this.dimensionTextField.getText());
+                        final float roughness = Float.parseFloat(TerrainGeneratorMainFrame.this.roughnessTextField.getText());
+                        TerrainGeneratorMainFrame.this.session.getEventBus().publish(new GenerateTerrainEvent(dimension, roughness));
+                    }
+                });
             }
         });
         return result;
