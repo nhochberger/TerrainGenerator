@@ -58,10 +58,10 @@ public class TerrainVisualization implements GLEventListener {
         gl.glPushMatrix();
         gl.glTranslatef(0f, 0f, -15.0f);
         gl.glScaled(this.getZoom(), this.getZoom(), this.getZoom());
+        gl.glTranslatef(this.xTranslation, this.yTranslation, 0f);
         gl.glRotatef(this.getxAngle(), 1.0f, 0.0f, 0.0f);
         gl.glRotatef(this.getyAngle(), 0.0f, 1.0f, 0.0f);
         gl.glTranslatef(-this.points.length / 2, 0f, -this.points.length / 2);
-        gl.glTranslatef(this.xTranslation, this.yTranslation, 0f);
 
         drawCoordinates(gl);
 
@@ -72,7 +72,7 @@ public class TerrainVisualization implements GLEventListener {
 
     private void drawTerrain(final GL2 gl) {
         gl.glPushMatrix();
-        final float[] matShininess = { 25.0f };
+        final float[] matShininess = { 0.0f };
         gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SHININESS, FloatBuffer.wrap(matShininess));
 
         final float[] matAmbient = { 0.2f, 0.2f, 0.2f, 0.0f };
@@ -87,14 +87,14 @@ public class TerrainVisualization implements GLEventListener {
         gl.glBegin(GL2.GL_QUADS);
         for (int x = 0; x < this.points.length - 1; x++) {
             for (int z = 0; z < this.points[0].length - 1; z++) {
-                gl.glNormal3f(x, this.points[x][z], z);
-                gl.glVertex3f(x, this.points[x][z], z);
-                gl.glNormal3f(x + 1, this.points[x + 1][z], z);
-                gl.glVertex3f(x + 1, this.points[x + 1][z], z);
-                gl.glNormal3f(x + 1, this.points[x + 1][z + 1], z + 1);
-                gl.glVertex3f(x + 1, this.points[x + 1][z + 1], z + 1);
                 gl.glNormal3f(x, this.points[x][z + 1], z + 1);
                 gl.glVertex3f(x, this.points[x][z + 1], z + 1);
+                gl.glNormal3f(x + 1, this.points[x + 1][z + 1], z + 1);
+                gl.glVertex3f(x + 1, this.points[x + 1][z + 1], z + 1);
+                gl.glNormal3f(x + 1, this.points[x + 1][z], z);
+                gl.glVertex3f(x + 1, this.points[x + 1][z], z);
+                gl.glNormal3f(x, this.points[x][z], z);
+                gl.glVertex3f(x, this.points[x][z], z);
             }
         }
         gl.glEnd();
@@ -132,7 +132,7 @@ public class TerrainVisualization implements GLEventListener {
         final float[] specularLight = { 0.3f, 0.3f, 0.3f, 0f };
         gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, specularLight, 0);
 
-        final float[] lightPosition = { 5000.0f, -50000.0f, 5000.0f, 0f };
+        final float[] lightPosition = { 10000.0f, 10000.0f, 10000.0f, 0f };
         gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, FloatBuffer.wrap(lightPosition));
 
         gl.glEnable(GL2.GL_LIGHTING);
