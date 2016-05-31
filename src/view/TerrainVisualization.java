@@ -35,6 +35,7 @@ public class TerrainVisualization implements GLEventListener {
         gl.glDepthFunc(GL2.GL_LEQUAL);
         gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
         gl.glEnable(GL2.GL_NORMALIZE);
+        gl.glEnable(GL2.GL_CULL_FACE);
         lighting(gl);
     }
 
@@ -92,9 +93,9 @@ public class TerrainVisualization implements GLEventListener {
         for (int x = 0; x < this.points.length - 1; x++) {
             for (int z = 0; z < this.points[0].length - 1; z++) {
                 gl.glVertex3f(x, this.points[x][z], z);
-                gl.glVertex3f(x + 1, this.points[x + 1][z], z);
-                gl.glVertex3f(x + 1, this.points[x + 1][z + 1], z + 1);
                 gl.glVertex3f(x, this.points[x][z + 1], z + 1);
+                gl.glVertex3f(x + 1, this.points[x + 1][z + 1], z + 1);
+                gl.glVertex3f(x + 1, this.points[x + 1][z], z);
                 final float[] one = { 0f, this.points[x][z + 1] - this.points[x][z], 1f };
                 final float[] two = { 1f, this.points[x + 1][z] - this.points[x][z], 0 };
                 float[] normal = new float[3];
