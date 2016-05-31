@@ -6,6 +6,7 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.glu.GLU;
+import com.jogamp.opengl.math.VectorUtil;
 
 public class TerrainVisualization implements GLEventListener {
 
@@ -33,6 +34,7 @@ public class TerrainVisualization implements GLEventListener {
         gl.glEnable(GL2.GL_DEPTH_TEST);
         gl.glDepthFunc(GL2.GL_LEQUAL);
         gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
+        gl.glEnable(GL2.GL_NORMALIZE);
         lighting(gl);
     }
 
@@ -53,6 +55,8 @@ public class TerrainVisualization implements GLEventListener {
 
     private void render(final GLAutoDrawable drawable) {
         final GL2 gl = drawable.getGL().getGL2();
+        gl.glClearDepth(1d);
+        gl.glClearColor(0f, 0f, 0f, 0f);
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
         gl.glLoadIdentity();
         gl.glPushMatrix();
@@ -87,17 +91,19 @@ public class TerrainVisualization implements GLEventListener {
         gl.glBegin(GL2.GL_QUADS);
         for (int x = 0; x < this.points.length - 1; x++) {
             for (int z = 0; z < this.points[0].length - 1; z++) {
-                gl.glNormal3f(x, this.points[x][z + 1], z + 1);
-                gl.glVertex3f(x, this.points[x][z + 1], z + 1);
-                gl.glNormal3f(x + 1, this.points[x + 1][z + 1], z + 1);
-                gl.glVertex3f(x + 1, this.points[x + 1][z + 1], z + 1);
-                gl.glNormal3f(x + 1, this.points[x + 1][z], z);
-                gl.glVertex3f(x + 1, this.points[x + 1][z], z);
-                gl.glNormal3f(x, this.points[x][z], z);
                 gl.glVertex3f(x, this.points[x][z], z);
+                gl.glVertex3f(x + 1, this.points[x + 1][z], z);
+                gl.glVertex3f(x + 1, this.points[x + 1][z + 1], z + 1);
+                gl.glVertex3f(x, this.points[x][z + 1], z + 1);
+                final float[] one = { 0f, this.points[x][z + 1] - this.points[x][z], 1f };
+                final float[] two = { 1f, this.points[x + 1][z] - this.points[x][z], 0 };
+                float[] normal = new float[3];
+                normal = VectorUtil.crossVec3(normal, one, two);
+                gl.glNormal3f(normal[0], normal[1], normal[2]);
             }
         }
         gl.glEnd();
+
         gl.glPopMatrix();
     }
 
@@ -120,7 +126,6 @@ public class TerrainVisualization implements GLEventListener {
 
     private void lighting(final GL2 gl) {
 
-        gl.glClearColor(0f, 0f, 0f, 0f);
         gl.glShadeModel(GL2.GL_SMOOTH);
 
         final float[] ambientLight = { 0.2f, 0.4f, 0.2f, 0f };
@@ -137,7 +142,6 @@ public class TerrainVisualization implements GLEventListener {
 
         gl.glEnable(GL2.GL_LIGHTING);
         gl.glEnable(GL2.GL_LIGHT0);
-        gl.glEnable(GL2.GL_NORMALIZE);
     }
 
     private void drawCoordinates(final GL2 gl) {
