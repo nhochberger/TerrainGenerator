@@ -77,16 +77,16 @@ public class TerrainVisualization implements GLEventListener {
 
     private void drawTerrain(final GL2 gl) {
         gl.glPushMatrix();
-        final float[] matShininess = { 0.0f };
+        final float[] matShininess = { 50.0f };
         gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SHININESS, FloatBuffer.wrap(matShininess));
 
         final float[] matAmbient = { 0.2f, 0.2f, 0.2f, 0.0f };
         gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, FloatBuffer.wrap(matAmbient));
 
-        final float[] matDiffuse = { 0.7f, 0.6f, 0.4f, 1.0f };
+        final float[] matDiffuse = { 0.7f, 0.6f, 0.6f, 1.0f };
         gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, FloatBuffer.wrap(matDiffuse));
 
-        final float[] matSpecular = { 0.3f, 0.3f, 0.3f, 1.0f };
+        final float[] matSpecular = { 1.0f, 1.0f, 1.0f, 1.0f };
         gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, FloatBuffer.wrap(matSpecular));
 
         gl.glBegin(GL2.GL_QUADS);
@@ -147,7 +147,7 @@ public class TerrainVisualization implements GLEventListener {
 
     private void drawCoordinates(final GL2 gl) {
         gl.glPushMatrix();
-        final float[] matShininess = { 50.0f };
+        final float[] matShininess = { 0.0f };
         gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SHININESS, FloatBuffer.wrap(matShininess));
 
         final float[] matDiffuse = { 0.0f, 0.0f, 0.0f, 0.0f };
