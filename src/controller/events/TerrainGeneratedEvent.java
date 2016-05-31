@@ -19,5 +19,4 @@ public class TerrainGeneratedEvent implements Event {
     public float[][] getHeightMap() {
         return this.heightMap;
     }
-
 }
