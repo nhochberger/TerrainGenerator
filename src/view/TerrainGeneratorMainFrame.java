@@ -11,6 +11,7 @@ import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowListener;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -21,6 +22,7 @@ import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.FPSAnimator;
 
+import controller.events.ExportTerrainEvent;
 import controller.events.GenerateTerrainEvent;
 import edt.EDT;
 import hochberger.utilities.application.session.BasicSession;
@@ -55,6 +57,7 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
         disposeOnClose();
         SetLookAndFeelTo.systemLookAndFeel();
         setContentPane(new JPanel(new BorderLayout()));
+        getContentPane().setBackground(Color.BLACK);
         final JPanel controllPanel = controllPanel();
         getContentPane().add(controllPanel, BorderLayout.NORTH);
         final GLProfile glp = GLProfile.getDefault();
@@ -62,8 +65,6 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
         final GLCanvas canvas = new GLCanvas(caps);
         this.visualization = new TerrainVisualization();
         canvas.addGLEventListener(this.visualization);
-        final JPanel test = new JPanel();
-        test.setBackground(Color.BLACK);
         getContentPane().add(canvas, BorderLayout.CENTER);
         this.animator.add(canvas);
         this.animator.start();
@@ -78,16 +79,25 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
     }
 
     private JPanel controllPanel() {
-        final JPanel generationPanel = generationPanel();
-
-        // controllPanel.add(new JButton("Show/hide coordinates"));
-        // controllPanel.add(new JButton("Reset zoom"));
-        // controllPanel.add(new JButton("Reset rotation"));
-
         final JPanel controllPanel = new JPanel();
-        controllPanel.setBackground(Color.BLACK);
-
+        controllPanel.setOpaque(false);
+        final JPanel generationPanel = generationPanel();
         controllPanel.add(generationPanel);
+        final JButton exportButton = new JButton(new DirectI18N("Export...").toString());
+        exportButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                final JFileChooser fileChooser = new JFileChooser(System.getProperty("user.home"));
+                fileChooser.showSaveDialog(frame());
+                if (null == fileChooser.getSelectedFile()) {
+                    return;
+                }
+                final String path = fileChooser.getSelectedFile().getAbsolutePath();
+                TerrainGeneratorMainFrame.this.session.getEventBus().publishFromEDT(new ExportTerrainEvent(path));
+            }
+        });
+        controllPanel.add(exportButton);
         return controllPanel;
     }
 

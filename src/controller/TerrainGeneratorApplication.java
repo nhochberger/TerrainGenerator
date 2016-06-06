@@ -9,6 +9,7 @@ import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.eventbus.SimpleEventBus;
 import model.DiamondSquareGenerator;
 import model.HeightMapGenerator;
+import model.export.CSVHeightMapExporter;
 import view.TerrainGeneratorGui;
 
 public class TerrainGeneratorApplication extends BasicLoggedApplication {
@@ -16,6 +17,7 @@ public class TerrainGeneratorApplication extends BasicLoggedApplication {
     private final BasicSession session;
     private final TerrainGeneratorGui gui;
     private final HeightMapGenerator generator;
+    private final ExportTerrainEventHandler exportHandler;
 
     public static void main(final String[] args) {
         setUpLoggingServices(TerrainGeneratorApplication.class);
@@ -33,6 +35,7 @@ public class TerrainGeneratorApplication extends BasicLoggedApplication {
         this.session = new BasicSession(applicationProperties, new SimpleEventBus(), getLogger());
         this.gui = new TerrainGeneratorGui(this.session);
         this.generator = new DiamondSquareGenerator(this.session);
+        this.exportHandler = new ExportTerrainEventHandler(this.session, new CSVHeightMapExporter(this.session));
     }
 
     @Override
@@ -40,11 +43,13 @@ public class TerrainGeneratorApplication extends BasicLoggedApplication {
         super.start();
         this.session.getEventBus().register(new ApplicationShutdownEventReceiver(this.session, this), ApplicationShutdownEvent.class);
         this.session.getEventBus().register(new GenerateTerrainEventForwarder(this.session, this.generator), GenerateTerrainEvent.class);
+        this.exportHandler.start();
         this.gui.activate();
     }
 
     @Override
     public void stop() {
+        this.exportHandler.stop();
         this.gui.deactivate();
         super.stop();
     }
