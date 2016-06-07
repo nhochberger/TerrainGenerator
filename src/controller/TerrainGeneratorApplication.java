@@ -41,6 +41,7 @@ public class TerrainGeneratorApplication extends BasicLoggedApplication {
     @Override
     public void start() {
         super.start();
+        logger().info("TerrainGenerator " + this.session.getProperties().version());
         this.session.getEventBus().register(new ApplicationShutdownEventReceiver(this.session, this), ApplicationShutdownEvent.class);
         this.session.getEventBus().register(new GenerateTerrainEventForwarder(this.session, this.generator), GenerateTerrainEvent.class);
         this.exportHandler.start();

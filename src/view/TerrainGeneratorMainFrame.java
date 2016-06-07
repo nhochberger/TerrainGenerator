@@ -31,6 +31,7 @@ import hochberger.utilities.gui.input.SelfHighlightningValidatingTextField;
 import hochberger.utilities.gui.input.ValidatingTextField;
 import hochberger.utilities.gui.input.validator.InputValidator;
 import hochberger.utilities.gui.lookandfeel.SetLookAndFeelTo;
+import hochberger.utilities.text.Text;
 import hochberger.utilities.text.i18n.DirectI18N;
 import hochberger.utilities.threading.ThreadRunner;
 import net.miginfocom.swing.MigLayout;
@@ -45,7 +46,7 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
     private ValidatingTextField roughnessTextField;
 
     public TerrainGeneratorMainFrame(final BasicSession session) {
-        super(session.getProperties().title());
+        super(session.getProperties().title() + Text.space() + session.getProperties().version());
         this.session = session;
         this.animator = new FPSAnimator(60);
     }
