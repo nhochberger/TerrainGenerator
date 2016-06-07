@@ -8,7 +8,6 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
-import java.awt.event.WindowListener;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -167,10 +166,6 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
             }
         });
         return result;
-    }
-
-    public void addWindowListener(final WindowListener listener) {
-        frame().addWindowListener(listener);
     }
 
     public void setProgress(final int percentage) {
