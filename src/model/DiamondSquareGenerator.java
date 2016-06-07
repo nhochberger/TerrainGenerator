@@ -36,12 +36,10 @@ public class DiamondSquareGenerator extends SessionBasedObject implements Height
         logger().info("Starting terrain generation. Dimension: " + dimension + ", roughness: " + roughness);
         this.dimension = dimension;
         this.heightMap = new float[this.dimension][this.dimension];
-        for (int i = 0; i < this.dimension; i++) {
-            this.heightMap[0][i] = 0;
-            this.heightMap[dimension - 1][i] = 0;
-            this.heightMap[i][0] = 0;
-            this.heightMap[i][dimension - 1] = 0;
-        }
+        this.heightMap[0][0] = 0;
+        this.heightMap[dimension - 1][0] = 0;
+        this.heightMap[0][dimension - 1] = 0;
+        this.heightMap[dimension - 1][dimension - 1] = 0;
         this.rand = new Random();
         refine(dimension - 1, 0);
         logger().info("Terrain generation finished");
@@ -53,13 +51,13 @@ public class DiamondSquareGenerator extends SessionBasedObject implements Height
         if (1 > half) {
             return;
         }
-        for (int x = half; x < this.dimension - 1; x += size) {
-            for (int z = half; z < this.dimension - 1; z += size) {
+        for (int z = half; z < this.dimension - 1; z += size) {
+            for (int x = half; x < this.dimension - 1; x += size) {
                 square(x, z, half, step);
             }
         }
-        for (int x = 0; x <= this.dimension - 1; x += half) {
-            for (int z = (x + half) % size; z <= this.dimension - 1; z += size) {
+        for (int z = 0; z <= this.dimension - 1; z += half) {
+            for (int x = (z + half) % size; x <= this.dimension - 1; x += size) {
                 diamond(x, z, half, step);
             }
         }
