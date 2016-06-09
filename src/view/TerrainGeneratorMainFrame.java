@@ -23,6 +23,7 @@ import com.jogamp.opengl.util.FPSAnimator;
 
 import controller.events.ExportTerrainEvent;
 import controller.events.GenerateTerrainEvent;
+import controller.events.ImportTerrainEvent;
 import edt.EDT;
 import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.gui.EDTSafeFrame;
@@ -98,6 +99,21 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
             }
         });
         controllPanel.add(exportButton);
+        final JButton importButton = new JButton(new DirectI18N("Import...").toString());
+        importButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                final JFileChooser fileChooser = new JFileChooser(System.getProperty("user.home"));
+                fileChooser.showOpenDialog(frame());
+                if (null == fileChooser.getSelectedFile()) {
+                    return;
+                }
+                final String path = fileChooser.getSelectedFile().getAbsolutePath();
+                TerrainGeneratorMainFrame.this.session.getEventBus().publishFromEDT(new ImportTerrainEvent(path));
+            }
+        });
+        controllPanel.add(importButton);
         return controllPanel;
     }
 

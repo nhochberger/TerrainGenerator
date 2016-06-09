@@ -90,8 +90,8 @@ public class TerrainVisualization implements GLEventListener {
         gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, FloatBuffer.wrap(matSpecular));
 
         gl.glBegin(GL2.GL_QUADS);
-        for (int x = 0; x < this.points.length - 1; x++) {
-            for (int z = 0; z < this.points[0].length - 1; z++) {
+        for (int z = 0; z < this.points.length - 1; z++) {
+            for (int x = 0; x < this.points[0].length - 1; x++) {
                 gl.glVertex3f(x, this.points[x][z], z);
                 gl.glVertex3f(x, this.points[x][z + 1], z + 1);
                 gl.glVertex3f(x + 1, this.points[x + 1][z + 1], z + 1);

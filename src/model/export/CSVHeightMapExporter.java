@@ -21,9 +21,9 @@ public class CSVHeightMapExporter extends SessionBasedObject implements HeightMa
 
         final int numOfPoints = heightMap.length * heightMap.length;
         final StringBuffer buffer = new StringBuffer();
-        for (final float[] z : heightMap) {
-            for (final float x : z) {
-                buffer.append(x);
+        for (int z = 0; z < heightMap.length; z++) {
+            for (int x = 0; x < heightMap.length; x++) {
+                buffer.append(heightMap[x][z]);
                 buffer.append(DELIMITER);
             }
             buffer.append(System.lineSeparator());
