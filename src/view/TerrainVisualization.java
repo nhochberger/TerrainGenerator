@@ -8,6 +8,8 @@ import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.math.VectorUtil;
 
+import model.HeightMap;
+
 public class TerrainVisualization implements GLEventListener {
 
     private static final float INITIAL_ZOOM = 0.1f;
@@ -17,12 +19,12 @@ public class TerrainVisualization implements GLEventListener {
     private float xTranslation;
     private float yTranslation;
     private float zoom = INITIAL_ZOOM;
-    private float[][] points;
+    private HeightMap points;
 
     public TerrainVisualization() {
         super();
         this.glu = new GLU();
-        this.points = new float[0][0];
+        this.points = new HeightMap(0);
     }
 
     @Override
@@ -66,7 +68,7 @@ public class TerrainVisualization implements GLEventListener {
         gl.glTranslatef(this.xTranslation, this.yTranslation, 0f);
         gl.glRotatef(this.getxAngle(), 1.0f, 0.0f, 0.0f);
         gl.glRotatef(this.getyAngle(), 0.0f, 1.0f, 0.0f);
-        gl.glTranslatef(-this.points.length / 2, 0f, -this.points.length / 2);
+        gl.glTranslatef(-this.points.getDimension() / 2, 0f, -this.points.getDimension() / 2);
 
         drawCoordinates(gl);
 
@@ -90,14 +92,14 @@ public class TerrainVisualization implements GLEventListener {
         gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, FloatBuffer.wrap(matSpecular));
 
         gl.glBegin(GL2.GL_QUADS);
-        for (int z = 0; z < this.points.length - 1; z++) {
-            for (int x = 0; x < this.points[0].length - 1; x++) {
-                gl.glVertex3f(x, this.points[x][z], z);
-                gl.glVertex3f(x, this.points[x][z + 1], z + 1);
-                gl.glVertex3f(x + 1, this.points[x + 1][z + 1], z + 1);
-                gl.glVertex3f(x + 1, this.points[x + 1][z], z);
-                final float[] one = { 0f, this.points[x][z + 1] - this.points[x][z], 1f };
-                final float[] two = { 1f, this.points[x + 1][z] - this.points[x][z], 0 };
+        for (int z = 0; z < this.points.getDimension() - 1; z++) {
+            for (int x = 0; x < this.points.getDimension() - 1; x++) {
+                gl.glVertex3d(x, this.points.get(x, z), z);
+                gl.glVertex3d(x, this.points.get(x, z + 1), z + 1);
+                gl.glVertex3d(x + 1, this.points.get(x + 1, z + 1), z + 1);
+                gl.glVertex3d(x + 1, this.points.get(x + 1, z), z);
+                final float[] one = { 0, (float) (this.points.get(x, z + 1) - this.points.get(x, z)), 1 };
+                final float[] two = { 1, (float) (this.points.get(x + 1, z) - this.points.get(x, z)), 0 };
                 float[] normal = new float[3];
                 normal = VectorUtil.crossVec3(normal, one, two);
                 gl.glNormal3f(normal[0], normal[1], normal[2]);
@@ -221,7 +223,7 @@ public class TerrainVisualization implements GLEventListener {
         this.yTranslation = yTranslation;
     }
 
-    public void setPoints(final float[][] points) {
+    public void setPoints(final HeightMap points) {
         this.points = points;
         // if (0 >= points.length) {
         // this.zoom = INITIAL_ZOOM;

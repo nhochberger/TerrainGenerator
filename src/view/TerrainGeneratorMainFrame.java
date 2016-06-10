@@ -34,6 +34,7 @@ import hochberger.utilities.gui.lookandfeel.SetLookAndFeelTo;
 import hochberger.utilities.text.Text;
 import hochberger.utilities.text.i18n.DirectI18N;
 import hochberger.utilities.threading.ThreadRunner;
+import model.HeightMap;
 import net.miginfocom.swing.MigLayout;
 
 public class TerrainGeneratorMainFrame extends EDTSafeFrame {
@@ -212,7 +213,7 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
         }
     }
 
-    public void setHeightMap(final float[][] heightMap) {
+    public void setHeightMap(final HeightMap heightMap) {
         EDT.performBlocking(new Runnable() {
 
             @Override

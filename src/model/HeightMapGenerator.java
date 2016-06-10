@@ -2,6 +2,6 @@ package model;
 
 public interface HeightMapGenerator {
 
-	public float[][] generate(int dimension, float roughness);
+    public HeightMap generate(int dimension, double roughness);
 
 }

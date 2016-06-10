@@ -6,12 +6,13 @@ import hochberger.utilities.application.Lifecycle;
 import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.application.session.SessionBasedObject;
 import hochberger.utilities.eventbus.EventReceiver;
+import model.HeightMap;
 import model.export.HeightMapExporter;
 
 public class ExportTerrainEventHandler extends SessionBasedObject implements Lifecycle {
 
     private final HeightMapExporter exporter;
-    private float[][] heightMap;
+    private HeightMap heightMap;
 
     public ExportTerrainEventHandler(final BasicSession session, final HeightMapExporter exporter) {
         super(session);

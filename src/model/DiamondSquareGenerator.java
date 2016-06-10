@@ -11,10 +11,10 @@ import hochberger.utilities.application.session.SessionBasedObject;
  */
 public class DiamondSquareGenerator extends SessionBasedObject implements HeightMapGenerator {
 
-    private float roughness;
+    private double roughness;
     private int dimension;
     private Random rand;
-    private float[][] heightMap;
+    private HeightMap map;
 
     public DiamondSquareGenerator(final BasicSession session) {
         super(session);
@@ -31,19 +31,19 @@ public class DiamondSquareGenerator extends SessionBasedObject implements Height
      */
 
     @Override
-    public float[][] generate(final int dimension, final float roughness) {
+    public HeightMap generate(final int dimension, final double roughness) {
         this.roughness = roughness;
         logger().info("Starting terrain generation. Dimension: " + dimension + ", roughness: " + roughness);
         this.dimension = dimension;
-        this.heightMap = new float[this.dimension][this.dimension];
-        this.heightMap[0][0] = 0;
-        this.heightMap[dimension - 1][0] = 0;
-        this.heightMap[0][dimension - 1] = 0;
-        this.heightMap[dimension - 1][dimension - 1] = 0;
+        this.map = new HeightMap(dimension);
+        this.map.set(0, 0, 0);
+        this.map.set(dimension - 1, 0, 0);
+        this.map.set(0, dimension - 1, 0);
+        this.map.set(dimension - 1, dimension - 1, 0);
         this.rand = new Random();
         refine(dimension - 1, 0);
         logger().info("Terrain generation finished");
-        return this.heightMap;
+        return this.map;
     }
 
     private void refine(final int size, int step) {
@@ -66,45 +66,45 @@ public class DiamondSquareGenerator extends SessionBasedObject implements Height
     }
 
     private void square(final int x, final int z, final int delta, final int step) {
-        final float averageOfCorners = average(this.heightMap[x - delta][z - delta], this.heightMap[x + delta][z - delta], this.heightMap[x + delta][z + delta], this.heightMap[x - delta][z + delta]);
+        final float averageOfCorners = average(this.map.get(x - delta, z - delta), this.map.get(x + delta, z - delta), this.map.get(x + delta, z + delta), this.map.get(x - delta, z + delta));
         final double offset = this.rand.nextGaussian() * (this.roughness * delta);
-        this.heightMap[x][z] = (float) (averageOfCorners + offset);
+        this.map.set(x, z, (averageOfCorners + offset));
     }
 
     private void diamond(final int x, final int z, final int delta, final int step) {
         final float averageOfCorners = calculateDiamondAveragesFor(x, z, delta);
         final double offset = this.rand.nextGaussian() * (this.roughness * delta);
-        this.heightMap[x][z] = (float) (averageOfCorners + offset);
+        this.map.set(x, z, (averageOfCorners + offset));
     }
 
     private float calculateDiamondAveragesFor(final int x, final int z, final int delta) {
         float sum = 0f;
         int numberOfSummands = 0;
         if (0 <= x - delta) {
-            sum += this.heightMap[x - delta][z];
+            sum += this.map.get(x - delta, z);
             numberOfSummands++;
         }
         if (this.dimension > x + delta) {
-            sum += this.heightMap[x + delta][z];
+            sum += this.map.get(x + delta, z);
             numberOfSummands++;
         }
         if (0 <= z - delta) {
-            sum += this.heightMap[x][z - delta];
+            sum += this.map.get(x, z - delta);
             numberOfSummands++;
         }
         if (this.dimension > z + delta) {
-            sum += this.heightMap[x][z + delta];
+            sum += this.map.get(x, z + delta);
             numberOfSummands++;
         }
         return sum / numberOfSummands;
     }
 
-    private float average(final float... args) {
+    private float average(final double... args) {
         float sum = 0;
         if (0 == args.length) {
             return 0f;
         }
-        for (final float current : args) {
+        for (final double current : args) {
             sum += current;
         }
         return sum / args.length;

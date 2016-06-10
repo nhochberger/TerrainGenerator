@@ -1,5 +1,7 @@
 package model.export;
 
+import model.HeightMap;
+
 public interface HeightMapExporter {
-    public void export(float[][] heightMap, String filePath);
+    public void export(HeightMap heightMap, String filePath);
 }

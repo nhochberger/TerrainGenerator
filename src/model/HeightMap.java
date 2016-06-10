@@ -1,18 +1,25 @@
 package model;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class HeightMap {
 
-	private final Map<Coordinate, Float> specifiedPoints;
+    private final double[][] points;
+    private final int dimension;
 
-	public HeightMap() {
-		super();
-		this.specifiedPoints = new HashMap<Coordinate, Float>();
-	}
+    public HeightMap(final int dimension) {
+        super();
+        this.dimension = dimension;
+        this.points = new double[dimension][dimension];
+    }
 
-	public void setSpecifiedPoint(final int x, final int z, final float value) {
-		this.specifiedPoints.put(new Coordinate(x, z), value);
-	}
+    public void set(final int x, final int z, final double elevation) {
+        this.points[x][z] = elevation;
+    }
+
+    public double get(final int x, final int z) {
+        return this.points[x][z];
+    }
+
+    public int getDimension() {
+        return this.dimension;
+    }
 }
