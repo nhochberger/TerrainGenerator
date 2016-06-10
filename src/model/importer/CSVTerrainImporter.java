@@ -32,7 +32,6 @@ public class CSVTerrainImporter extends SessionBasedObject implements TerrainImp
         try {
             final List<String> lines = Files.readAllLines(file.toPath());
             final int dimension = lines.size();
-            // final float[][] heightMap = new float[dimension][dimension];
             final HeightMap map = new HeightMap(dimension);
             for (int z = 0; z < dimension; z++) {
                 final String line = lines.get(z);
