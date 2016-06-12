@@ -1,13 +1,20 @@
 package view;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.nio.FloatBuffer;
+
+import javax.imageio.ImageIO;
 
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.math.VectorUtil;
+import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
 
+import hochberger.utilities.threading.ThreadRunner;
 import model.HeightMap;
 
 public class TerrainVisualization implements GLEventListener {
@@ -20,11 +27,14 @@ public class TerrainVisualization implements GLEventListener {
     private float yTranslation;
     private float zoom = INITIAL_ZOOM;
     private HeightMap points;
+    private boolean takeScreenshotWithNextRender;
+    private String screenshotFilePath;
 
     public TerrainVisualization() {
         super();
         this.glu = new GLU();
         this.points = new HeightMap(0);
+        this.takeScreenshotWithNextRender = false;
     }
 
     @Override
@@ -73,8 +83,32 @@ public class TerrainVisualization implements GLEventListener {
         drawCoordinates(gl);
 
         drawTerrain(gl);
+
+        takeScreenShot(drawable);
+
         gl.glPopMatrix();
         gl.glFlush();
+    }
+
+    private void takeScreenShot(final GLAutoDrawable drawable) {
+        if (!this.takeScreenshotWithNextRender) {
+            return;
+        }
+        this.takeScreenshotWithNextRender = false;
+        final AWTGLReadBufferUtil util = new AWTGLReadBufferUtil(drawable.getGLProfile(), false);
+        final BufferedImage image = util.readPixelsToBufferedImage(drawable.getGL(), true);
+        final File outputfile = new File(this.screenshotFilePath);
+        ThreadRunner.startThread(new Runnable() {
+
+            @Override
+            public void run() {
+                try {
+                    ImageIO.write(image, "png", outputfile);
+                } catch (final IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     private void drawTerrain(final GL2 gl) {
@@ -231,4 +265,11 @@ public class TerrainVisualization implements GLEventListener {
         // this.zoom = 7f / points.length;
     }
 
+    public void prepareScreenshot(final String filePath) {
+        this.screenshotFilePath = filePath;
+        this.takeScreenshotWithNextRender = true;
+        // final AWTGLReadBufferUtil util = new AWTGLReadBufferUtil(this.latestDrawable.getGLProfile(), false);
+        // final BufferedImage image = util.readPixelsToBufferedImage(this.latestDrawable.getGL(), true);
+        // return image;
+    }
 }

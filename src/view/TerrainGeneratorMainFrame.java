@@ -115,6 +115,21 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
             }
         });
         controllPanel.add(importButton);
+        final JButton takeScreenshotButton = new JButton(new DirectI18N("Screenshot...").toString());
+        takeScreenshotButton.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                final JFileChooser fileChooser = new JFileChooser(System.getProperty("user.home"));
+                fileChooser.showSaveDialog(frame());
+                if (null == fileChooser.getSelectedFile()) {
+                    return;
+                }
+                final String path = fileChooser.getSelectedFile().getAbsolutePath();
+                TerrainGeneratorMainFrame.this.visualization.prepareScreenshot(path);
+            }
+        });
+        controllPanel.add(takeScreenshotButton);
         return controllPanel;
     }
 
