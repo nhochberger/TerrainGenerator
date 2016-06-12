@@ -259,17 +259,10 @@ public class TerrainVisualization implements GLEventListener {
 
     public void setPoints(final HeightMap points) {
         this.points = points;
-        // if (0 >= points.length) {
-        // this.zoom = INITIAL_ZOOM;
-        // }
-        // this.zoom = 7f / points.length;
     }
 
     public void prepareScreenshot(final String filePath) {
         this.screenshotFilePath = filePath;
         this.takeScreenshotWithNextRender = true;
-        // final AWTGLReadBufferUtil util = new AWTGLReadBufferUtil(this.latestDrawable.getGLProfile(), false);
-        // final BufferedImage image = util.readPixelsToBufferedImage(this.latestDrawable.getGL(), true);
-        // return image;
     }
 }
