@@ -156,7 +156,7 @@ public class TerrainVisualization implements GLEventListener {
         gl.glMatrixMode(GL2.GL_PROJECTION);
         gl.glLoadIdentity();
 
-        this.glu.gluPerspective(45.0f, h, 1.0, 20.0);
+        this.glu.gluPerspective(45.0f, h, 1.0, 1000.0);
         gl.glMatrixMode(GL2.GL_MODELVIEW);
         gl.glLoadIdentity();
     }
