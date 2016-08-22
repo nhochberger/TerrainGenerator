@@ -48,7 +48,6 @@ public class TerrainVisualization implements GLEventListener {
         gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
         gl.glEnable(GL2.GL_NORMALIZE);
         gl.glEnable(GL2.GL_CULL_FACE);
-        lighting(gl);
     }
 
     @Override
@@ -79,6 +78,8 @@ public class TerrainVisualization implements GLEventListener {
         gl.glRotatef(this.getxAngle(), 1.0f, 0.0f, 0.0f);
         gl.glRotatef(this.getyAngle(), 0.0f, 1.0f, 0.0f);
         gl.glTranslatef(-this.points.getDimension() / 2, 0f, -this.points.getDimension() / 2);
+
+        lighting(gl);
 
         drawCoordinates(gl);
 
