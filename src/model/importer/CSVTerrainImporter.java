@@ -10,10 +10,9 @@ import controller.events.ImportFinishedEvent;
 import controller.events.ImportTerrainEvent;
 import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.application.session.SessionBasedObject;
-import hochberger.utilities.eventbus.EventReceiver;
 import model.HeightMap;
 
-public class CSVTerrainImporter extends SessionBasedObject implements TerrainImporter, EventReceiver<ImportTerrainEvent> {
+public class CSVTerrainImporter extends SessionBasedObject implements TerrainImporter {
 
     private static final String DELIMITER = ", ";
 
