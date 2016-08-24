@@ -78,7 +78,6 @@ public class TerrainVisualization implements GLEventListener {
         gl.glRotatef(this.getxAngle(), 1.0f, 0.0f, 0.0f);
         gl.glRotatef(this.getyAngle(), 0.0f, 1.0f, 0.0f);
         gl.glTranslatef(-this.points.getDimension() / 2, 0f, -this.points.getDimension() / 2);
-
         lighting(gl);
 
         drawCoordinates(gl);
@@ -126,6 +125,12 @@ public class TerrainVisualization implements GLEventListener {
         final float[] matSpecular = { 1.0f, 1.0f, 1.0f, 1.0f };
         gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, FloatBuffer.wrap(matSpecular));
 
+        drawSurface(gl);
+
+        gl.glPopMatrix();
+    }
+
+    protected void drawSurface(final GL2 gl) {
         gl.glBegin(GL2.GL_QUADS);
         for (int z = 0; z < this.points.getDimension() - 1; z++) {
             for (int x = 0; x < this.points.getDimension() - 1; x++) {
@@ -141,8 +146,6 @@ public class TerrainVisualization implements GLEventListener {
             }
         }
         gl.glEnd();
-
-        gl.glPopMatrix();
     }
 
     @Override
@@ -265,5 +268,9 @@ public class TerrainVisualization implements GLEventListener {
     public void prepareScreenshot(final String filePath) {
         this.screenshotFilePath = filePath;
         this.takeScreenshotWithNextRender = true;
+    }
+
+    protected HeightMap points() {
+        return this.points;
     }
 }
