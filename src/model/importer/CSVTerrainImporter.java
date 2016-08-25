@@ -5,14 +5,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
 
-import controller.events.ImportFailedEvent;
-import controller.events.ImportFinishedEvent;
-import controller.events.ImportTerrainEvent;
 import hochberger.utilities.application.session.BasicSession;
-import hochberger.utilities.application.session.SessionBasedObject;
 import model.HeightMap;
 
-public class CSVTerrainImporter extends SessionBasedObject implements TerrainImporter {
+public class CSVTerrainImporter extends TerrainImporter {
 
     private static final String DELIMITER = ", ";
 
@@ -21,39 +17,22 @@ public class CSVTerrainImporter extends SessionBasedObject implements TerrainImp
     }
 
     @Override
-    public void importTerrain(final String filepath) {
-        logger().info("Trying to import " + filepath);
-        final File file = new File(filepath);
-        if (!file.exists()) {
-            return;
-        }
-        logger().info("Importing " + file.length() + " bytes");
-        try {
-            final List<String> lines = Files.readAllLines(file.toPath());
-            final int dimension = lines.size();
-            final HeightMap map = new HeightMap(dimension);
-            for (int z = 0; z < dimension; z++) {
-                final String line = lines.get(z);
-                final String[] split = line.split(DELIMITER);
-                for (int x = 0; x < split.length; x++) {
-                    if (dimension != split.length) {
-                        logger().error("Corrupt file. Dimensions do not fit.");
-                        return;
-                    }
-                    final String elevation = split[x];
-                    map.set(x, z, Float.parseFloat(elevation));
+    public HeightMap importTerrain(final File file) throws IOException {
+        final List<String> lines = Files.readAllLines(file.toPath());
+        final int dimension = lines.size();
+        final HeightMap map = new HeightMap(dimension);
+        for (int z = 0; z < dimension; z++) {
+            final String line = lines.get(z);
+            final String[] split = line.split(DELIMITER);
+            for (int x = 0; x < split.length; x++) {
+                if (dimension != split.length) {
+                    logger().error("Corrupt file. Dimensions do not fit.");
+                    return new HeightMap(0);
                 }
+                final String elevation = split[x];
+                map.set(x, z, Float.parseFloat(elevation));
             }
-            logger().info("Import finished");
-            session().getEventBus().publish(new ImportFinishedEvent(map));
-        } catch (final IOException | NumberFormatException e) {
-            logger().error("Error while importing File", e);
-            session().getEventBus().publish(new ImportFailedEvent());
         }
-    }
-
-    @Override
-    public void receive(final ImportTerrainEvent event) {
-        importTerrain(event.getFilePath());
+        return map;
     }
 }
