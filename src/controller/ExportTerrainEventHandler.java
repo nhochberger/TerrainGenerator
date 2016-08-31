@@ -1,6 +1,7 @@
 package controller;
 
 import controller.events.ExportTerrainEvent;
+import controller.events.ImportFinishedEvent;
 import controller.events.TerrainGeneratedEvent;
 import hochberger.utilities.application.Lifecycle;
 import hochberger.utilities.application.session.BasicSession;
@@ -23,12 +24,25 @@ public class ExportTerrainEventHandler extends SessionBasedObject implements Lif
     public void start() {
         logger().info("Starting ExportTerrainEventHandler");
         session().getEventBus().register(new TerrainGeneratedEventForwarder(), TerrainGeneratedEvent.class);
+        session().getEventBus().register(new TerrainImportedEventForwarder(), ImportFinishedEvent.class);
         session().getEventBus().register(new ExportTerrainEventForwarder(), ExportTerrainEvent.class);
     }
 
     @Override
     public void stop() {
         logger().info("ExportTerrainEventHandler stopped");
+    }
+
+    private final class TerrainImportedEventForwarder implements EventReceiver<ImportFinishedEvent> {
+
+        public TerrainImportedEventForwarder() {
+            super();
+        }
+
+        @Override
+        public void receive(final ImportFinishedEvent event) {
+            ExportTerrainEventHandler.this.heightMap = event.getHeightMap();
+        }
     }
 
     private final class TerrainGeneratedEventForwarder implements EventReceiver<TerrainGeneratedEvent> {

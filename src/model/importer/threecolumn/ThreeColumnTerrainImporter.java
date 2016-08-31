@@ -19,39 +19,81 @@ public class ThreeColumnTerrainImporter extends TerrainImporter {
 
     @Override
     public HeightMap importTerrain(final File file) throws IOException {
-        final HeightMap map = new HeightMap(0);
+        HeightMap map = new HeightMap(0);
         final List<String> lines = Files.readAllLines(file.toPath());
         final List<Double> lats = new LinkedList<>();
         final List<Double> lons = new LinkedList<>();
+        final List<GeoPoint> demPoints = new LinkedList<>();
+        logger().info("Parsing DEM information.");
         for (final String line : lines) {
             final ThreeColumnDemEntry entry = ThreeColumnDemEntry.from(line);
-            lats.add(entry.getLatitude());
-            lons.add(entry.getLongitude());
+            if (0 != entry.getAltitude()) {
+                demPoints.add(new GeoPoint(entry.getLatitude(), entry.getLongitude(), entry.getAltitude()));
+                lats.add(entry.getLatitude());
+                lons.add(entry.getLongitude());
+            }
         }
+        final GeoPoint origin = determineOrigin(lats, lons);
+        final List<MetricGridPoint> metricGrid = new LinkedList<>();
+        double xMax = 0;
+        double zMax = 0;
+        logger().info("Determining the dimension of the area.");
+        for (final GeoPoint point : demPoints) {
+            final MetricGridPoint metricGridPoint = new MetricGridPoint(xDistance(origin, point), point.getAlt(), zDistance(origin, point));
+            metricGrid.add(metricGridPoint);
+            if (xMax < metricGridPoint.getX()) {
+                xMax = metricGridPoint.getX();
+            }
+            if (zMax < metricGridPoint.getZ()) {
+                zMax = metricGridPoint.getZ();
+            }
+        }
+        map = new HeightMap((int) Math.max(xMax, zMax) + 1);
+        logger().info("Interpolating elevation of points in grid. This may take several minutes.");
+        for (int z = 0; z < map.getDimension(); z++) {
+            for (int x = 0; x < map.getDimension(); x++) {
+                map.set(x, z, findElevationOfClosestPoint(metricGrid, x, z));
+            }
+        }
+        return map;
+    }
+
+    private double findElevationOfClosestPoint(final List<MetricGridPoint> metricGrid, final int x, final int z) {
+        final MetricGridPoint point = new MetricGridPoint(x, 0, z);
+        double minDistance = Double.MAX_VALUE;
+        double elevation = 0;
+        for (final MetricGridPoint metricGridPoint : metricGrid) {
+            final double distance = point.distanceTo(metricGridPoint);
+            if (distance < minDistance) {
+                minDistance = distance;
+                elevation = metricGridPoint.getY();
+            }
+        }
+        return elevation;
+    }
+
+    private double xDistance(final GeoPoint origin, final GeoPoint point) {
+        return origin.distanceTo(new GeoPoint(origin.getLat(), point.getLon(), 0));
+    }
+
+    private double zDistance(final GeoPoint origin, final GeoPoint point) {
+        return origin.distanceTo(new GeoPoint(point.getLat(), origin.getLon(), 0));
+    }
+
+    protected GeoPoint determineOrigin(final List<Double> lats, final List<Double> lons) {
         double minLat = lats.get(0);
-        double maxLat = lats.get(0);
         for (final Double lat : lats) {
             if (minLat > lat) {
                 minLat = lat;
             }
-            if (maxLat < lat) {
-                maxLat = lat;
-            }
         }
         double minLon = lons.get(0);
-        double maxLon = lons.get(0);
         for (final Double lon : lons) {
             if (minLon > lon) {
                 minLon = lon;
             }
-            if (maxLon < lon) {
-                maxLon = lon;
-            }
         }
-        final GeoPoint origin = new GeoPoint(minLat, minLon, 0);
-        final GeoPoint maxXPoint = new GeoPoint(minLat, maxLon, 0);
-        final GeoPoint maxZPoint = new GeoPoint(maxLat, minLon, 0);
-        return map;
+        return new GeoPoint(minLat, minLon, 0);
     }
 
     private static class ThreeColumnDemEntry {
