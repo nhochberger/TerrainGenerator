@@ -155,7 +155,7 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
         dimensionLabel.setForeground(Color.WHITE);
         generationPanel.add(dimensionLabel);
         generationPanel.add(this.dimensionTextField);
-        this.roughnessTextField = new SelfHighlightningValidatingTextField("0.2", 4);
+        this.roughnessTextField = new SelfHighlightningValidatingTextField("0.6", 4);
         this.roughnessTextField.addValidator(new InputValidator<String>() {
 
             @Override
