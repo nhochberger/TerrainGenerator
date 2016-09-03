@@ -2,6 +2,7 @@ package view;
 
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.math.VectorUtil;
+import com.jogamp.opengl.util.texture.TextureCoords;
 
 public class TriangleBasedTerrainVisualization extends TerrainVisualization {
 
@@ -12,6 +13,7 @@ public class TriangleBasedTerrainVisualization extends TerrainVisualization {
     @Override
     protected void drawSurface(final GL2 gl) {
         gl.glBegin(GL2.GL_TRIANGLES);
+        final TextureCoords coords = this.texture.getImageTexCoords();
         for (int z = 0; z < points().getDimension() - 1; z++) {
             for (int x = 0; x < this.points().getDimension() - 1; x++) {
                 final double distance1 = Math.abs(this.points().get(x, z) - this.points().get(x + 1, z + 1));
@@ -19,8 +21,11 @@ public class TriangleBasedTerrainVisualization extends TerrainVisualization {
 
                 if (distance1 < distance2) {
                     gl.glVertex3d(x, this.points().get(x, z), z);
+                    gl.glTexCoord2d(coords.bottom(), coords.left());
                     gl.glVertex3d(x + 1, this.points().get(x + 1, z + 1), z + 1);
+                    gl.glTexCoord2d(coords.top(), coords.right());
                     gl.glVertex3d(x + 1, this.points().get(x + 1, z), z);
+                    gl.glTexCoord2d(coords.bottom(), coords.right());
                     final float[] one1 = { 1, (float) (this.points().get(x, z + 1) - this.points().get(x, z)), 0 };
                     final float[] two1 = { 1, (float) (this.points().get(x + 1, z + 1) - this.points().get(x, z)), 1 };
                     float[] normal1 = new float[3];
@@ -28,8 +33,11 @@ public class TriangleBasedTerrainVisualization extends TerrainVisualization {
                     gl.glNormal3f(normal1[0], normal1[1], normal1[2]);
 
                     gl.glVertex3d(x, this.points().get(x, z), z);
+                    gl.glTexCoord2d(coords.bottom(), coords.left());
                     gl.glVertex3d(x, this.points().get(x, z + 1), z + 1);
+                    gl.glTexCoord2d(coords.bottom(), coords.right());
                     gl.glVertex3d(x + 1, this.points().get(x + 1, z + 1), z + 1);
+                    gl.glTexCoord2d(coords.top(), coords.right());
                     final float[] one2 = { 0, (float) (this.points().get(x, z + 1) - this.points().get(x, z)), 1 };
                     final float[] two2 = { 1, (float) (this.points().get(x + 1, z + 1) - this.points().get(x, z)), 1 };
                     float[] normal2 = new float[3];
@@ -37,8 +45,11 @@ public class TriangleBasedTerrainVisualization extends TerrainVisualization {
                     gl.glNormal3f(normal2[0], normal2[1], normal2[2]);
                 } else {
                     gl.glVertex3d(x + 1, this.points().get(x + 1, z + 1), z + 1);
+                    gl.glTexCoord2d(coords.top(), coords.right());
                     gl.glVertex3d(x + 1, this.points().get(x + 1, z), z);
+                    gl.glTexCoord2d(coords.top(), coords.left());
                     gl.glVertex3d(x, this.points().get(x, z + 1), z + 1);
+                    gl.glTexCoord2d(coords.bottom(), coords.right());
                     final float[] one1 = { -1, (float) (this.points().get(x, z + 1) - this.points().get(x + 1, z + 1)), 0 };
                     final float[] two1 = { 0, (float) (this.points().get(x + 1, z) - this.points().get(x + 1, z + 1)), -1 };
                     float[] normal1 = new float[3];
@@ -46,8 +57,11 @@ public class TriangleBasedTerrainVisualization extends TerrainVisualization {
                     gl.glNormal3f(normal1[0], normal1[1], normal1[2]);
 
                     gl.glVertex3d(x + 1, this.points().get(x + 1, z), z);
+                    gl.glTexCoord2d(coords.top(), coords.left());
                     gl.glVertex3d(x, this.points().get(x, z), z);
+                    gl.glTexCoord2d(coords.bottom(), coords.left());
                     gl.glVertex3d(x, this.points().get(x, z + 1), z + 1);
+                    gl.glTexCoord2d(coords.bottom(), coords.right());
                     final float[] one2 = { 0, (float) (this.points().get(x, z + 1) - this.points().get(x, z)), 1 };
                     final float[] two2 = { 1, (float) (this.points().get(x + 1, z + 1) - this.points().get(x, z)), 0 };
                     float[] normal2 = new float[3];

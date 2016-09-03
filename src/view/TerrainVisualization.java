@@ -34,7 +34,8 @@ public class TerrainVisualization implements GLEventListener {
     private HeightMap points;
     private boolean takeScreenshotWithNextRender;
     private String screenshotFilePath;
-    private Texture texture;
+    // NOTE: break encapsulation for performance reasons
+    protected Texture texture;
 
     public TerrainVisualization() {
         super();
