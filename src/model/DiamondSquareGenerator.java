@@ -37,7 +37,7 @@ public class DiamondSquareGenerator extends SessionBasedObject implements Height
         this.dimension = dimension;
         this.rand = new Random();
         this.map = new HeightMap(dimension);
-        this.map.set(0, 0, this.rand.nextGaussian() * dimension * roughness);
+        this.map.set(0, 0, 0);
         this.map.set(dimension - 1, 0, this.rand.nextGaussian() * dimension * roughness);
         this.map.set(0, dimension - 1, this.rand.nextGaussian() * dimension * roughness);
         this.map.set(dimension - 1, dimension - 1, this.rand.nextGaussian() * dimension * roughness);
