@@ -10,10 +10,15 @@ import javax.imageio.ImageIO;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLEventListener;
+import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.math.VectorUtil;
 import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
+import com.jogamp.opengl.util.texture.Texture;
+import com.jogamp.opengl.util.texture.TextureCoords;
+import com.jogamp.opengl.util.texture.TextureIO;
 
+import hochberger.utilities.application.ResourceLoader;
 import hochberger.utilities.threading.ThreadRunner;
 import model.HeightMap;
 
@@ -29,6 +34,7 @@ public class TerrainVisualization implements GLEventListener {
     private HeightMap points;
     private boolean takeScreenshotWithNextRender;
     private String screenshotFilePath;
+    private Texture texture;
 
     public TerrainVisualization() {
         super();
@@ -48,6 +54,13 @@ public class TerrainVisualization implements GLEventListener {
         gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
         gl.glEnable(GL2.GL_NORMALIZE);
         gl.glEnable(GL2.GL_CULL_FACE);
+        try {
+            this.texture = TextureIO.newTexture(ResourceLoader.loadFile("snow_256.jpg"), false);
+        } catch (GLException | IOException e) {
+            e.printStackTrace();
+        }
+        this.texture.enable(gl);
+        this.texture.bind(gl);
     }
 
     @Override
@@ -116,10 +129,10 @@ public class TerrainVisualization implements GLEventListener {
         final float[] matShininess = { 50.0f };
         gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SHININESS, FloatBuffer.wrap(matShininess));
 
-        final float[] matAmbient = { 0.1f, 0.1f, 0.1f, 0.0f };
+        final float[] matAmbient = { 0.3f, 0.3f, 0.3f, 0.0f };
         gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, FloatBuffer.wrap(matAmbient));
 
-        final float[] matDiffuse = { 0.7f, 0.6f, 0.6f, 1.0f };
+        final float[] matDiffuse = { 0.7f, 0.7f, 0.7f, 1.0f };
         gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, FloatBuffer.wrap(matDiffuse));
 
         final float[] matSpecular = { 1.0f, 1.0f, 1.0f, 1.0f };
@@ -132,12 +145,17 @@ public class TerrainVisualization implements GLEventListener {
 
     protected void drawSurface(final GL2 gl) {
         gl.glBegin(GL2.GL_QUADS);
+        final TextureCoords coords = this.texture.getImageTexCoords();
         for (int z = 0; z < this.points.getDimension() - 1; z++) {
             for (int x = 0; x < this.points.getDimension() - 1; x++) {
                 gl.glVertex3d(x, this.points.get(x, z), z);
+                gl.glTexCoord2d(coords.bottom(), coords.left());
                 gl.glVertex3d(x, this.points.get(x, z + 1), z + 1);
+                gl.glTexCoord2d(coords.top(), coords.left());
                 gl.glVertex3d(x + 1, this.points.get(x + 1, z + 1), z + 1);
+                gl.glTexCoord2d(coords.top(), coords.right());
                 gl.glVertex3d(x + 1, this.points.get(x + 1, z), z);
+                gl.glTexCoord2d(coords.bottom(), coords.right());
                 final float[] one = { 0, (float) (this.points.get(x, z + 1) - this.points.get(x, z)), 1 };
                 final float[] two = { 1, (float) (this.points.get(x + 1, z) - this.points.get(x, z)), 0 };
                 float[] normal = new float[3];
@@ -169,10 +187,10 @@ public class TerrainVisualization implements GLEventListener {
 
         gl.glShadeModel(GL2.GL_SMOOTH);
 
-        final float[] ambientLight = { 0.2f, 0.4f, 0.2f, 0f };
+        final float[] ambientLight = { 1f, 1f, 1f, 1f };
         gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, ambientLight, 0);
 
-        final float[] diffuseLight = { 0.7f, 1f, 0.8f, 0f };
+        final float[] diffuseLight = { 1f, 1f, 1f, 0f };
         gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, diffuseLight, 0);
 
         final float[] specularLight = { 0.3f, 0.3f, 0.3f, 0f };
