@@ -56,7 +56,7 @@ public class TerrainVisualization implements GLEventListener {
         gl.glEnable(GL2.GL_NORMALIZE);
         gl.glEnable(GL2.GL_CULL_FACE);
         try {
-            this.texture = TextureIO.newTexture(ResourceLoader.loadFile("snow_256.jpg"), false);
+            this.texture = TextureIO.newTexture(ResourceLoader.loadStream("snow_256.jpg"), false, "jpg");
         } catch (GLException | IOException e) {
             e.printStackTrace();
         }
