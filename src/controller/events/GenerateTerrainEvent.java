@@ -4,13 +4,15 @@ import hochberger.utilities.eventbus.Event;
 
 public class GenerateTerrainEvent implements Event {
 
-    private final float roughness;
     private final int dimension;
+    private final double roughness;
+    private final double elevation;
 
-    public GenerateTerrainEvent(final int dimension, final float roughness) {
+    public GenerateTerrainEvent(final int dimension, final double roughness, final double elevation) {
         super();
         this.dimension = dimension;
         this.roughness = roughness;
+        this.elevation = elevation;
     }
 
     @Override
@@ -21,7 +23,11 @@ public class GenerateTerrainEvent implements Event {
         return this.dimension;
     }
 
-    public float getRoughness() {
+    public double getRoughness() {
         return this.roughness;
+    }
+
+    public double getElevation() {
+        return this.elevation;
     }
 }

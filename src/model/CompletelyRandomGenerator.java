@@ -13,7 +13,7 @@ public class CompletelyRandomGenerator extends SessionBasedObject implements Hei
     }
 
     @Override
-    public HeightMap generate(final int dimension, final double roughness) {
+    public HeightMap generate(final int dimension, final double roughness, final double elevation) {
         final HeightMap map = new HeightMap(dimension);
         final Random rand = new Random();
         for (int x = 0; x < dimension; x++) {

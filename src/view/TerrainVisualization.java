@@ -91,7 +91,7 @@ public class TerrainVisualization implements GLEventListener {
         gl.glTranslatef(this.xTranslation, this.yTranslation, 0f);
         gl.glRotatef(this.getxAngle(), 1.0f, 0.0f, 0.0f);
         gl.glRotatef(this.getyAngle(), 0.0f, 1.0f, 0.0f);
-        gl.glTranslatef(-this.points.getDimension() / 2, 0f, -this.points.getDimension() / 2);
+        gl.glTranslatef(-this.points.getDimension(), 0f, -this.points.getDimension());
         lighting(gl);
 
         drawCoordinates(gl);
@@ -149,13 +149,13 @@ public class TerrainVisualization implements GLEventListener {
         final TextureCoords coords = this.texture.getImageTexCoords();
         for (int z = 0; z < this.points.getDimension() - 1; z++) {
             for (int x = 0; x < this.points.getDimension() - 1; x++) {
-                gl.glVertex3d(x, this.points.get(x, z), z);
+                gl.glVertex3d(2 * x, this.points.get(x, z), 2 * z);
                 gl.glTexCoord2d(coords.bottom(), coords.left());
-                gl.glVertex3d(x, this.points.get(x, z + 1), z + 1);
+                gl.glVertex3d(2 * x, this.points.get(x, z + 1), 2 * (z + 1));
                 gl.glTexCoord2d(coords.top(), coords.left());
-                gl.glVertex3d(x + 1, this.points.get(x + 1, z + 1), z + 1);
+                gl.glVertex3d(2 * (x + 1), this.points.get(x + 1, z + 1), 2 * (z + 1));
                 gl.glTexCoord2d(coords.top(), coords.right());
-                gl.glVertex3d(x + 1, this.points.get(x + 1, z), z);
+                gl.glVertex3d(2 * (x + 1), this.points.get(x + 1, z), 2 * z);
                 gl.glTexCoord2d(coords.bottom(), coords.right());
                 final float[] one = { 0, (float) (this.points.get(x, z + 1) - this.points.get(x, z)), 1 };
                 final float[] two = { 1, (float) (this.points.get(x + 1, z) - this.points.get(x, z)), 0 };

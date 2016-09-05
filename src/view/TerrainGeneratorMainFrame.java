@@ -29,6 +29,7 @@ import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.gui.EDTSafeFrame;
 import hochberger.utilities.gui.input.SelfHighlightningValidatingTextField;
 import hochberger.utilities.gui.input.ValidatingTextField;
+import hochberger.utilities.gui.input.validator.FloatStringInputValidator;
 import hochberger.utilities.gui.input.validator.InputValidator;
 import hochberger.utilities.gui.lookandfeel.SetLookAndFeelTo;
 import hochberger.utilities.text.Text;
@@ -45,6 +46,7 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
     private final BasicSession session;
     private ValidatingTextField dimensionTextField;
     private ValidatingTextField roughnessTextField;
+    private ValidatingTextField elevationTextField;
 
     public TerrainGeneratorMainFrame(final BasicSession session) {
         super(session.getProperties().title() + Text.space() + session.getProperties().version());
@@ -151,28 +153,22 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
                 return 0 == (n & (n - 1));
             }
         });
-        final JLabel dimensionLabel = new JLabel(new DirectI18N("Dimension: ").toString());
+        final JLabel dimensionLabel = new JLabel(new DirectI18N("Dimension:").toString());
         dimensionLabel.setForeground(Color.WHITE);
         generationPanel.add(dimensionLabel);
         generationPanel.add(this.dimensionTextField);
         this.roughnessTextField = new SelfHighlightningValidatingTextField("0.6", 4);
-        this.roughnessTextField.addValidator(new InputValidator<String>() {
-
-            @Override
-            public boolean isValid(final String input) {
-                try {
-                    Float.parseFloat(input);
-                } catch (final NumberFormatException e) {
-                    return false;
-                }
-                final float parsedInput = Float.parseFloat(input);
-                return 0 <= parsedInput && 1 >= parsedInput;
-            }
-        });
-        final JLabel roughnessLabel = new JLabel(new DirectI18N("Roughness: ").toString());
+        this.roughnessTextField.addValidator(new FloatStringInputValidator());
+        final JLabel roughnessLabel = new JLabel(new DirectI18N("Roughness:").toString());
         roughnessLabel.setForeground(Color.WHITE);
         generationPanel.add(roughnessLabel);
         generationPanel.add(this.roughnessTextField);
+        this.elevationTextField = new SelfHighlightningValidatingTextField("0.5", 4);
+        this.elevationTextField.addValidator(new FloatStringInputValidator());
+        final JLabel elvationLabel = new JLabel(new DirectI18N("Elevation:").toString());
+        elvationLabel.setForeground(Color.WHITE);
+        generationPanel.add(elvationLabel);
+        generationPanel.add(this.elevationTextField);
         generationPanel.add(generateTerrainButton());
         return generationPanel;
     }
@@ -187,12 +183,14 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
 
                     @Override
                     public void run() {
-                        if (!(TerrainGeneratorMainFrame.this.dimensionTextField.isValid() && TerrainGeneratorMainFrame.this.roughnessTextField.isValid())) {
+                        if (!(TerrainGeneratorMainFrame.this.dimensionTextField.isValid() && TerrainGeneratorMainFrame.this.roughnessTextField.isValid()
+                                && TerrainGeneratorMainFrame.this.elevationTextField.isValid())) {
                             return;
                         }
                         final int dimension = Integer.parseInt(TerrainGeneratorMainFrame.this.dimensionTextField.getText());
                         final float roughness = Float.parseFloat(TerrainGeneratorMainFrame.this.roughnessTextField.getText());
-                        TerrainGeneratorMainFrame.this.session.getEventBus().publish(new GenerateTerrainEvent(dimension, roughness));
+                        final float elevation = Float.parseFloat(TerrainGeneratorMainFrame.this.elevationTextField.getText());
+                        TerrainGeneratorMainFrame.this.session.getEventBus().publish(new GenerateTerrainEvent(dimension, roughness, elevation));
                     }
                 });
             }

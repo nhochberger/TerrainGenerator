@@ -31,16 +31,16 @@ public class DiamondSquareGenerator extends SessionBasedObject implements Height
      */
 
     @Override
-    public HeightMap generate(final int dimension, final double roughness) {
+    public HeightMap generate(final int dimension, final double roughness, final double elevation) {
         this.roughness = roughness;
         logger().info("Starting terrain generation. Dimension: " + dimension + ", roughness: " + roughness);
         this.dimension = dimension;
         this.rand = new Random();
         this.map = new HeightMap(dimension);
         this.map.set(0, 0, 0);
-        this.map.set(dimension - 1, 0, this.rand.nextGaussian() * dimension * roughness * 0.05);
-        this.map.set(0, dimension - 1, this.rand.nextGaussian() * dimension * roughness * 0.05);
-        this.map.set(dimension - 1, dimension - 1, this.rand.nextGaussian() * dimension * roughness * 0.05);
+        this.map.set(dimension - 1, 0, this.rand.nextGaussian() * dimension * elevation * 0.05);
+        this.map.set(0, dimension - 1, this.rand.nextGaussian() * dimension * elevation * 0.05);
+        this.map.set(dimension - 1, dimension - 1, this.rand.nextGaussian() * dimension * elevation * 0.05);
         refine(dimension - 1, 0);
         logger().info("Terrain generation finished");
         return this.map;
@@ -69,7 +69,6 @@ public class DiamondSquareGenerator extends SessionBasedObject implements Height
         final float averageOfCorners = average(this.map.get(x - delta, z - delta), this.map.get(x + delta, z - delta), this.map.get(x + delta, z + delta), this.map.get(x - delta, z + delta));
         final double offset = this.rand.nextGaussian() * this.roughness * delta / (step + 1);
         this.map.set(x, z, (averageOfCorners + offset));
-        System.err.println(step);
     }
 
     private void diamond(final int x, final int z, final int delta, final int step) {
