@@ -50,8 +50,8 @@ public class ThreeColumnTerrainImporter extends TerrainImporter {
         }
         map = new HeightMap((int) Math.max(xMax, zMax) + 1);
         logger().info("Interpolating elevation of points in grid. This may take several minutes.");
-        for (int z = 0; z < map.getDimension(); z++) {
-            for (int x = 0; x < map.getDimension(); x++) {
+        for (int z = 0; z < map.getZDimension(); z++) {
+            for (int x = 0; x < map.getXDimension(); x++) {
                 map.set(x, z, findElevationOfClosestPoint(metricGrid, x, z));
             }
         }

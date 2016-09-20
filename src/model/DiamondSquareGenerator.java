@@ -67,13 +67,13 @@ public class DiamondSquareGenerator extends SessionBasedObject implements Height
 
     private void square(final int x, final int z, final int delta, final int step) {
         final float averageOfCorners = average(this.map.get(x - delta, z - delta), this.map.get(x + delta, z - delta), this.map.get(x + delta, z + delta), this.map.get(x - delta, z + delta));
-        final double offset = this.rand.nextGaussian() * this.roughness * delta / (step + 1);
+        final double offset = this.rand.nextGaussian() * this.roughness * delta;
         this.map.set(x, z, (averageOfCorners + offset));
     }
 
     private void diamond(final int x, final int z, final int delta, final int step) {
         final float averageOfCorners = calculateDiamondAveragesFor(x, z, delta);
-        final double offset = this.rand.nextGaussian() * this.roughness * delta / (step + 1);
+        final double offset = this.rand.nextGaussian() * this.roughness * delta;
         this.map.set(x, z, (averageOfCorners + offset));
     }
 

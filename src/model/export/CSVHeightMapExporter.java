@@ -19,10 +19,10 @@ public class CSVHeightMapExporter extends SessionBasedObject implements HeightMa
 
     @Override
     public void export(final HeightMap heightMap, final String filePath) {
-        final int numOfPoints = heightMap.getDimension() * heightMap.getDimension();
+        final int numOfPoints = heightMap.getXDimension() * heightMap.getZDimension();
         final StringBuffer buffer = new StringBuffer();
-        for (int z = 0; z < heightMap.getDimension(); z++) {
-            for (int x = 0; x < heightMap.getDimension(); x++) {
+        for (int z = 0; z < heightMap.getZDimension(); z++) {
+            for (int x = 0; x < heightMap.getXDimension(); x++) {
                 buffer.append(heightMap.get(x, z));
                 buffer.append(DELIMITER);
             }

@@ -3,12 +3,18 @@ package model;
 public class HeightMap {
 
     private final double[][] points;
-    private final int dimension;
+    private final int xDimension;
+    private final int zDimension;
 
     public HeightMap(final int dimension) {
+        this(dimension, dimension);
+    }
+
+    public HeightMap(final int xDimension, final int zDimension) {
         super();
-        this.dimension = dimension;
-        this.points = new double[dimension][dimension];
+        this.xDimension = xDimension;
+        this.zDimension = zDimension;
+        this.points = new double[xDimension][zDimension];
     }
 
     public void set(final int x, final int z, final double elevation) {
@@ -19,7 +25,11 @@ public class HeightMap {
         return this.points[x][z];
     }
 
-    public int getDimension() {
-        return this.dimension;
+    public int getXDimension() {
+        return this.xDimension;
+    }
+
+    public int getZDimension() {
+        return this.zDimension;
     }
 }

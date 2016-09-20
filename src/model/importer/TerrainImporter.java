@@ -36,7 +36,7 @@ public abstract class TerrainImporter extends SessionBasedObject implements Even
         logger().info("Importing " + file.length() + " bytes");
         try {
             this.map = importTerrain(file);
-            logger().info("Import finished");
+            logger().info("Import finished. Imported " + this.map.getXDimension() + " x " + this.map.getZDimension() + " elevation points.");
             session().getEventBus().publish(new ImportFinishedEvent(this.map));
         } catch (final IOException | NumberFormatException e) {
             logger().error("Error while importing File", e);

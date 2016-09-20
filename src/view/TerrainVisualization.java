@@ -31,11 +31,11 @@ public class TerrainVisualization implements GLEventListener {
     private float xTranslation;
     private float yTranslation;
     private float zoom = INITIAL_ZOOM;
-    private HeightMap points;
     private boolean takeScreenshotWithNextRender;
     private String screenshotFilePath;
     // NOTE: break encapsulation for performance reasons
     protected Texture texture;
+    protected HeightMap points;
 
     public TerrainVisualization() {
         super();
@@ -56,7 +56,7 @@ public class TerrainVisualization implements GLEventListener {
         gl.glEnable(GL2.GL_NORMALIZE);
         gl.glEnable(GL2.GL_CULL_FACE);
         try {
-            this.texture = TextureIO.newTexture(ResourceLoader.loadStream("snow_256.jpg"), false, "jpg");
+            this.texture = TextureIO.newTexture(ResourceLoader.loadStream("snow_2_512.jpg"), true, "jpg");
         } catch (GLException | IOException e) {
             e.printStackTrace();
         }
@@ -91,7 +91,7 @@ public class TerrainVisualization implements GLEventListener {
         gl.glTranslatef(this.xTranslation, this.yTranslation, 0f);
         gl.glRotatef(this.getxAngle(), 1.0f, 0.0f, 0.0f);
         gl.glRotatef(this.getyAngle(), 0.0f, 1.0f, 0.0f);
-        gl.glTranslatef(-this.points.getDimension(), 0f, -this.points.getDimension());
+        gl.glTranslatef(-this.points.getXDimension(), 0f, -this.points.getZDimension());
         lighting(gl);
 
         drawCoordinates(gl);
@@ -147,8 +147,8 @@ public class TerrainVisualization implements GLEventListener {
     protected void drawSurface(final GL2 gl) {
         gl.glBegin(GL2.GL_QUADS);
         final TextureCoords coords = this.texture.getImageTexCoords();
-        for (int z = 0; z < this.points.getDimension() - 1; z++) {
-            for (int x = 0; x < this.points.getDimension() - 1; x++) {
+        for (int z = 0; z < this.points.getZDimension() - 1; z++) {
+            for (int x = 0; x < this.points.getXDimension() - 1; x++) {
                 gl.glVertex3d(2 * x, this.points.get(x, z), 2 * z);
                 gl.glTexCoord2d(coords.bottom(), coords.left());
                 gl.glVertex3d(2 * x, this.points.get(x, z + 1), 2 * (z + 1));
@@ -287,9 +287,5 @@ public class TerrainVisualization implements GLEventListener {
     public void prepareScreenshot(final String filePath) {
         this.screenshotFilePath = filePath;
         this.takeScreenshotWithNextRender = true;
-    }
-
-    protected HeightMap points() {
-        return this.points;
     }
 }
