@@ -36,12 +36,14 @@ public class TerrainVisualization implements GLEventListener {
     // NOTE: break encapsulation for performance reasons
     protected Texture texture;
     protected HeightMap points;
+    protected final double scalingFactor;
 
     public TerrainVisualization() {
         super();
         this.glu = new GLU();
         this.points = new HeightMap(0);
         this.takeScreenshotWithNextRender = false;
+        this.scalingFactor = 1d;
     }
 
     @Override
@@ -86,12 +88,12 @@ public class TerrainVisualization implements GLEventListener {
         gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
         gl.glLoadIdentity();
         gl.glPushMatrix();
-        gl.glTranslatef(0f, 0f, -15.0f);
+        gl.glTranslated(0d, 0d, -15.0d);
         gl.glScaled(this.getZoom(), this.getZoom(), this.getZoom());
-        gl.glTranslatef(this.xTranslation, this.yTranslation, 0f);
-        gl.glRotatef(this.getxAngle(), 1.0f, 0.0f, 0.0f);
-        gl.glRotatef(this.getyAngle(), 0.0f, 1.0f, 0.0f);
-        gl.glTranslatef(-this.points.getXDimension(), 0f, -this.points.getZDimension());
+        gl.glTranslated(this.xTranslation / (10 * getZoom()), this.yTranslation / (10 * getZoom()), 0d);
+        gl.glRotated(this.getxAngle(), 1.0d, 0.0d, 0.0d);
+        gl.glRotated(this.getyAngle(), 0.0d, 1.0d, 0.0d);
+        gl.glTranslated(-this.points.getXDimension() * this.scalingFactor / 2, 0f, -this.points.getZDimension() * this.scalingFactor / 2);
         lighting(gl);
 
         drawCoordinates(gl);
@@ -141,7 +143,13 @@ public class TerrainVisualization implements GLEventListener {
 
         drawSurface(gl);
 
+        drawWater(gl);
+
         gl.glPopMatrix();
+    }
+
+    protected void drawWater(final GL2 gl) {
+
     }
 
     protected void drawSurface(final GL2 gl) {
@@ -149,13 +157,13 @@ public class TerrainVisualization implements GLEventListener {
         final TextureCoords coords = this.texture.getImageTexCoords();
         for (int z = 0; z < this.points.getZDimension() - 1; z++) {
             for (int x = 0; x < this.points.getXDimension() - 1; x++) {
-                gl.glVertex3d(2 * x, this.points.get(x, z), 2 * z);
+                gl.glVertex3d(x, this.points.get(x, z), z);
                 gl.glTexCoord2d(coords.bottom(), coords.left());
-                gl.glVertex3d(2 * x, this.points.get(x, z + 1), 2 * (z + 1));
+                gl.glVertex3d(x, this.points.get(x, z + 1), (z + 1));
                 gl.glTexCoord2d(coords.top(), coords.left());
-                gl.glVertex3d(2 * (x + 1), this.points.get(x + 1, z + 1), 2 * (z + 1));
+                gl.glVertex3d((x + 1), this.points.get(x + 1, z + 1), (z + 1));
                 gl.glTexCoord2d(coords.top(), coords.right());
-                gl.glVertex3d(2 * (x + 1), this.points.get(x + 1, z), 2 * z);
+                gl.glVertex3d((x + 1), this.points.get(x + 1, z), z);
                 gl.glTexCoord2d(coords.bottom(), coords.right());
                 final float[] one = { 0, (float) (this.points.get(x, z + 1) - this.points.get(x, z)), 1 };
                 final float[] two = { 1, (float) (this.points.get(x + 1, z) - this.points.get(x, z)), 0 };
