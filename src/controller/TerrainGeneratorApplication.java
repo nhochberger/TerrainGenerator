@@ -8,7 +8,7 @@ import hochberger.utilities.application.ApplicationShutdownEventReceiver;
 import hochberger.utilities.application.BasicLoggedApplication;
 import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.eventbus.SimpleEventBus;
-import model.DiamondSquareGenerator;
+import model.ErosionDiamondSquareGenerator;
 import model.HeightMapGenerator;
 import model.export.CSVHeightMapExporter;
 import model.importer.NonSquareCSVTerrainImporter;
@@ -36,7 +36,8 @@ public class TerrainGeneratorApplication extends BasicLoggedApplication {
     public TerrainGeneratorApplication(final ApplicationProperties applicationProperties) {
         this.session = new BasicSession(applicationProperties, new SimpleEventBus(), getLogger());
         this.gui = new TerrainGeneratorGui(this.session);
-        this.generator = new DiamondSquareGenerator(this.session);
+        // this.generator = new DiamondSquareGenerator(this.session);
+        this.generator = new ErosionDiamondSquareGenerator(this.session);
         this.exportHandler = new ExportTerrainEventHandler(this.session, new CSVHeightMapExporter(this.session));
     }
 

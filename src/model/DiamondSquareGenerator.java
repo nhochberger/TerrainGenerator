@@ -21,12 +21,15 @@ public class DiamondSquareGenerator extends SessionBasedObject implements Height
     }
 
     /**
-     * Generates random fractal terrains assuming corners and edges as predefined to a height of zero.
+     * Generates random fractal terrains assuming corners to be at a maximum/minimum elevation of +/-elevation
      *
      * @param dimension
      *            - number of nodes along one side of the generated terrain. terrain will be a square consisting of dimension² nodes
      * @param roughness
      *            - defines how far apart to neighboring points are allowed to be. higher values will result in rougher surfaces
+     *
+     * @param elevation
+     *            - maximum offset +/- from 0 of the corners
      * @return heightMap - an array of float[dimension][dimension] containing the height values to be used
      */
 
