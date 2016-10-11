@@ -7,12 +7,14 @@ public class GenerateTerrainEvent implements Event {
     private final int dimension;
     private final double roughness;
     private final double elevation;
+    private final int erosion;
 
-    public GenerateTerrainEvent(final int dimension, final double roughness, final double elevation) {
+    public GenerateTerrainEvent(final int dimension, final double roughness, final double elevation, final int erosion) {
         super();
         this.dimension = dimension;
         this.roughness = roughness;
         this.elevation = elevation;
+        this.erosion = erosion;
     }
 
     @Override
@@ -29,5 +31,9 @@ public class GenerateTerrainEvent implements Event {
 
     public double getElevation() {
         return this.elevation;
+    }
+
+    public int getErosion() {
+        return this.erosion;
     }
 }

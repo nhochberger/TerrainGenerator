@@ -20,7 +20,7 @@ public class GenerateTerrainEventForwarder extends SessionBasedObject implements
     @Override
     public void receive(final GenerateTerrainEvent event) {
         logger().info("Received GenerateTerrainEvent");
-        final HeightMap heightMap = this.generator.generate(event.getDimension(), event.getRoughness(), event.getElevation());
+        final HeightMap heightMap = this.generator.generate(event.getDimension(), event.getRoughness(), event.getElevation(), event.getErosion());
         session().getEventBus().publish(new TerrainGeneratedEvent(heightMap));
     }
 }

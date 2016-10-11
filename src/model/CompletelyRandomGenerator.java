@@ -5,6 +5,7 @@ import java.util.Random;
 import controller.events.TerrainGenerationProgressEvent;
 import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.application.session.SessionBasedObject;
+import hochberger.utilities.text.i18n.DirectI18N;
 
 public class CompletelyRandomGenerator extends SessionBasedObject implements HeightMapGenerator {
 
@@ -13,7 +14,7 @@ public class CompletelyRandomGenerator extends SessionBasedObject implements Hei
     }
 
     @Override
-    public HeightMap generate(final int dimension, final double roughness, final double elevation) {
+    public HeightMap generate(final int dimension, final double roughness, final double elevation, final int erosion) {
         final HeightMap map = new HeightMap(dimension);
         final Random rand = new Random();
         for (int x = 0; x < dimension; x++) {
@@ -21,7 +22,7 @@ public class CompletelyRandomGenerator extends SessionBasedObject implements Hei
                 map.set(x, y, rand.nextFloat() * roughness);
                 final int percentage = (((x + 1) * 100) / dimension);
                 logger().info("Terrain generation at " + percentage + "%");
-                session().getEventBus().publish(new TerrainGenerationProgressEvent(percentage));
+                session().getEventBus().publish(new TerrainGenerationProgressEvent(new DirectI18N("Generation"), percentage));
             }
         }
         return map;

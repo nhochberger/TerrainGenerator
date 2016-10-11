@@ -5,6 +5,7 @@ import java.util.Random;
 import controller.events.TerrainGenerationProgressEvent;
 import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.application.session.SessionBasedObject;
+import hochberger.utilities.text.i18n.DirectI18N;
 
 /**
  * Generates random fractal terrains assuming corners and edges as predefined to a height of zero.
@@ -34,7 +35,7 @@ public class DiamondSquareGenerator extends SessionBasedObject implements Height
      */
 
     @Override
-    public HeightMap generate(final int dimension, final double roughness, final double elevation) {
+    public HeightMap generate(final int dimension, final double roughness, final double elevation, final int erosion) {
         this.roughness = roughness;
         logger().info("Starting terrain generation. Dimension: " + dimension + ", roughness: " + roughness);
         this.dimension = dimension;
@@ -64,7 +65,7 @@ public class DiamondSquareGenerator extends SessionBasedObject implements Height
                 diamond(x, z, half, step);
             }
         }
-        session().getEventBus().publish(new TerrainGenerationProgressEvent(101 - (int) (100 * ((float) size) / this.dimension)));
+        session().getEventBus().publish(new TerrainGenerationProgressEvent(new DirectI18N("Generation"), 101 - (int) (100 * ((float) size) / this.dimension)));
         refine(half, ++step);
     }
 

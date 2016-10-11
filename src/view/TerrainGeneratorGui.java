@@ -8,6 +8,7 @@ import hochberger.utilities.application.session.SessionBasedObject;
 import hochberger.utilities.eventbus.EventReceiver;
 import hochberger.utilities.gui.ApplicationGui;
 import hochberger.utilities.gui.WindowClosedApplicationShutdownEventPublisher;
+import hochberger.utilities.text.i18n.DirectI18N;
 
 public class TerrainGeneratorGui extends SessionBasedObject implements ApplicationGui {
 
@@ -53,6 +54,7 @@ public class TerrainGeneratorGui extends SessionBasedObject implements Applicati
         @Override
         public void receive(final ImportFinishedEvent event) {
             TerrainGeneratorGui.this.mainFrame.setHeightMap(event.getHeightMap());
+            TerrainGeneratorGui.this.mainFrame.setStage(new DirectI18N("Waiting"));
         }
 
     }
@@ -65,6 +67,7 @@ public class TerrainGeneratorGui extends SessionBasedObject implements Applicati
 
         @Override
         public void receive(final TerrainGenerationProgressEvent event) {
+            TerrainGeneratorGui.this.mainFrame.setStage(event.getStage());
             TerrainGeneratorGui.this.mainFrame.setProgress(event.getProgressPercentage());
         }
     }

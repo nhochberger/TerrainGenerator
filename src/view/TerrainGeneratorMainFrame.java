@@ -34,6 +34,7 @@ import hochberger.utilities.gui.input.validator.InputValidator;
 import hochberger.utilities.gui.lookandfeel.SetLookAndFeelTo;
 import hochberger.utilities.text.Text;
 import hochberger.utilities.text.i18n.DirectI18N;
+import hochberger.utilities.text.i18n.I18N;
 import hochberger.utilities.threading.ThreadRunner;
 import model.HeightMap;
 import net.miginfocom.swing.MigLayout;
@@ -43,10 +44,12 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
     private final FPSAnimator animator;
     private TerrainVisualization visualization;
     private JProgressBar progressBar;
+    private JLabel stageLabel;
     private final BasicSession session;
     private ValidatingTextField dimensionTextField;
     private ValidatingTextField roughnessTextField;
     private ValidatingTextField elevationTextField;
+    private ValidatingTextField erosionTextField;
 
     public TerrainGeneratorMainFrame(final BasicSession session) {
         super(session.getProperties().title() + Text.space() + session.getProperties().version());
@@ -76,7 +79,9 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
         final RotationTranslationListener mouseListener = new RotationTranslationListener();
         canvas.addMouseListener(mouseListener);
         canvas.addMouseMotionListener(mouseListener);
-        final JPanel progressPanel = new JPanel(new MigLayout("", "[grow]", "[grow]"));
+        final JPanel progressPanel = new JPanel(new MigLayout("", "[100][grow]", "[grow]"));
+        this.stageLabel = new JLabel(new DirectI18N("Waiting").toString());
+        progressPanel.add(this.stageLabel);
         this.progressBar = new JProgressBar(0, 100);
         progressPanel.add(this.progressBar, "grow");
         getContentPane().add(progressPanel, BorderLayout.SOUTH);
@@ -157,18 +162,25 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
         dimensionLabel.setForeground(Color.WHITE);
         generationPanel.add(dimensionLabel);
         generationPanel.add(this.dimensionTextField);
-        this.roughnessTextField = new SelfHighlightningValidatingTextField("0.6", 4);
+        this.roughnessTextField = new SelfHighlightningValidatingTextField("0.3", 4);
         this.roughnessTextField.addValidator(new FloatStringInputValidator());
         final JLabel roughnessLabel = new JLabel(new DirectI18N("Roughness:").toString());
         roughnessLabel.setForeground(Color.WHITE);
         generationPanel.add(roughnessLabel);
         generationPanel.add(this.roughnessTextField);
-        this.elevationTextField = new SelfHighlightningValidatingTextField("0.5", 4);
+        this.elevationTextField = new SelfHighlightningValidatingTextField("0.0", 4);
         this.elevationTextField.addValidator(new FloatStringInputValidator());
         final JLabel elvationLabel = new JLabel(new DirectI18N("Elevation:").toString());
         elvationLabel.setForeground(Color.WHITE);
         generationPanel.add(elvationLabel);
+        generationPanel.add(elvationLabel);
         generationPanel.add(this.elevationTextField);
+        this.erosionTextField = new SelfHighlightningValidatingTextField("25", 4);
+        this.erosionTextField.addValidator(new FloatStringInputValidator());
+        final JLabel erosionLabel = new JLabel(new DirectI18N("Erosion:").toString());
+        erosionLabel.setForeground(Color.WHITE);
+        generationPanel.add(erosionLabel);
+        generationPanel.add(this.erosionTextField);
         generationPanel.add(generateTerrainButton());
         return generationPanel;
     }
@@ -190,12 +202,23 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
                         final int dimension = Integer.parseInt(TerrainGeneratorMainFrame.this.dimensionTextField.getText());
                         final float roughness = Float.parseFloat(TerrainGeneratorMainFrame.this.roughnessTextField.getText());
                         final float elevation = Float.parseFloat(TerrainGeneratorMainFrame.this.elevationTextField.getText());
-                        TerrainGeneratorMainFrame.this.session.getEventBus().publish(new GenerateTerrainEvent(dimension, roughness, elevation));
+                        final int erosion = Integer.parseInt(TerrainGeneratorMainFrame.this.erosionTextField.getText());
+                        TerrainGeneratorMainFrame.this.session.getEventBus().publish(new GenerateTerrainEvent(dimension, roughness, elevation, erosion));
                     }
                 });
             }
         });
         return result;
+    }
+
+    public void setStage(final I18N stage) {
+        EDT.performBlocking(new Runnable() {
+
+            @Override
+            public void run() {
+                TerrainGeneratorMainFrame.this.stageLabel.setText(stage.toString());
+            }
+        });
     }
 
     public void setProgress(final int percentage) {
