@@ -8,7 +8,6 @@ import hochberger.utilities.text.i18n.DirectI18N;
 public class ErosionDiamondSquareGenerator extends SessionBasedObject implements HeightMapGenerator {
 
     private static final double THRESHOLD_FACTOR = 4d;
-    private static final double EROSION_COEFFICIENT = 0.5d;
 
     private final DiamondSquareGenerator generator;
 
@@ -28,38 +27,26 @@ public class ErosionDiamondSquareGenerator extends SessionBasedObject implements
         for (int n = 0; n < erosion; n++) {
             for (int z = 1; z < terrain.getZDimension() - 1; z++) {
                 for (int x = 1; x < terrain.getXDimension() - 1; x++) {
-                    double dMax = 0d;
-                    double dTotal = 0d;
-                    final double[][] neighborhood = new double[3][3];
-                    for (int i = -1; i <= 1; i++) { // Moore neighborhood
-                        for (int j = -1; j <= 1; j++) {
+                    int maxX = x;
+                    int maxZ = z;
+                    double maxD = 0d;
+                    for (int i = -1; i <= 1; i += 2) {
+                        for (int j = -1; j <= 1; j += 2) {
                             final double d = terrain.get(x, z) - terrain.get(x + j, z + i);
-                            if (threshold(terrain) < d) {
-                                neighborhood[j + 1][i + 1] = d;
-                                dTotal += d;
-                                if (dMax < d) {
-                                    dMax = d;
-                                }
+                            if (maxD <= d) {
+                                maxD = d;
+                                maxX = x + j;
+                                maxZ = z + i;
                             }
                         }
                     }
-                    if (0.001 < dTotal) {
-                        for (int i = -1; i <= 1; i++) { // Moore neighborhood
-                            for (int j = -1; j <= 1; j++) {
-                                final double offset = (neighborhood[j + 1][i + 1] / dTotal) * EROSION_COEFFICIENT * (dMax - threshold(terrain));
-                                final double newElevation = terrain.get(x + j, z + i) + offset;
-                                terrain.set(x + j, z + i, newElevation);
-                            }
-                        }
-                        System.err.println(terrain.get(x, z) - dTotal);
+                    if (2 * THRESHOLD_FACTOR / (terrain.getXDimension() + terrain.getZDimension()) < maxD) {
+                        terrain.set(x, z, terrain.get(x, z) - (maxD / 2d));
+                        terrain.set(maxX, maxZ, terrain.get(maxX, maxZ) + (maxD / 2d));
                     }
                 }
             }
             session().getEventBus().publish(new TerrainGenerationProgressEvent(new DirectI18N("Erosion"), 100 * (int) ((float) n + 1) / erosion));
         }
-    }
-
-    private double threshold(final HeightMap terrain) {
-        return 2d * THRESHOLD_FACTOR / (terrain.getXDimension() + terrain.getZDimension());
     }
 }
