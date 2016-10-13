@@ -1,13 +1,13 @@
 package controller.events;
 
 import hochberger.utilities.eventbus.Event;
-import model.HeightMap;
+import model.SurfaceMap;
 
 public class TerrainGeneratedEvent implements Event {
 
-    private final HeightMap heightMap;
+    private final SurfaceMap heightMap;
 
-    public TerrainGeneratedEvent(final HeightMap heightMap) {
+    public TerrainGeneratedEvent(final SurfaceMap heightMap) {
         super();
         this.heightMap = heightMap;
     }
@@ -17,7 +17,7 @@ public class TerrainGeneratedEvent implements Event {
         // TODO Auto-generated method stub
     }
 
-    public HeightMap getHeightMap() {
+    public SurfaceMap getHeightMap() {
         return this.heightMap;
     }
 }

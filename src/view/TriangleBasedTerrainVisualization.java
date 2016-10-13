@@ -1,10 +1,14 @@
 package view;
 
+import java.util.List;
+
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.math.VectorUtil;
+import com.jogamp.opengl.util.gl2.GLUT;
 import com.jogamp.opengl.util.texture.TextureCoords;
 
-import model.HeightMap;
+import model.Boulder;
+import model.SurfaceMap;
 
 public class TriangleBasedTerrainVisualization extends TerrainVisualization {
 
@@ -46,10 +50,18 @@ public class TriangleBasedTerrainVisualization extends TerrainVisualization {
             }
         }
         gl.glEnd();
+        final GLUT glut = new GLUT();
+        final List<Boulder> boulders = this.points.getBoulders();
+        for (final Boulder boulder : boulders) {
+            gl.glPushMatrix();
+            gl.glTranslated(boulder.getX(), boulder.getY(), boulder.getZ());
+            glut.glutSolidSphere(boulder.getRadius(), 5, 5);
+            gl.glPopMatrix();
+        }
     }
 
     @Override
-    public void setPoints(final HeightMap points) {
+    public void setPoints(final SurfaceMap points) {
         super.setPoints(points);
         calculateNormals();
     }

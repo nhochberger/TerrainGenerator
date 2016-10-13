@@ -10,8 +10,8 @@ public class PyramidGenerator extends SessionBasedObject implements HeightMapGen
     }
 
     @Override
-    public HeightMap generate(final int dimension, final double roughness, final double elevation, final int erosion) {
-        final HeightMap map = new HeightMap(dimension);
+    public SurfaceMap generate(final int dimension, final double roughness, final double elevation, final int erosion, final double boulders) {
+        final SurfaceMap map = new SurfaceMap(dimension);
         for (int x = 0; x < dimension; x++) {
             for (int z = 0; z < dimension; z++) {
                 map.set(x, z, x + z);

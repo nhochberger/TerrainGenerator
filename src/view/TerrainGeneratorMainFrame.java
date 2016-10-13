@@ -31,12 +31,13 @@ import hochberger.utilities.gui.input.SelfHighlightningValidatingTextField;
 import hochberger.utilities.gui.input.ValidatingTextField;
 import hochberger.utilities.gui.input.validator.FloatStringInputValidator;
 import hochberger.utilities.gui.input.validator.InputValidator;
+import hochberger.utilities.gui.input.validator.IntegerStringInputValidator;
 import hochberger.utilities.gui.lookandfeel.SetLookAndFeelTo;
 import hochberger.utilities.text.Text;
 import hochberger.utilities.text.i18n.DirectI18N;
 import hochberger.utilities.text.i18n.I18N;
 import hochberger.utilities.threading.ThreadRunner;
-import model.HeightMap;
+import model.SurfaceMap;
 import net.miginfocom.swing.MigLayout;
 
 public class TerrainGeneratorMainFrame extends EDTSafeFrame {
@@ -50,6 +51,7 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
     private ValidatingTextField roughnessTextField;
     private ValidatingTextField elevationTextField;
     private ValidatingTextField erosionTextField;
+    private ValidatingTextField boulderDensityTextField;
 
     public TerrainGeneratorMainFrame(final BasicSession session) {
         super(session.getProperties().title() + Text.space() + session.getProperties().version());
@@ -175,12 +177,18 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
         generationPanel.add(elvationLabel);
         generationPanel.add(elvationLabel);
         generationPanel.add(this.elevationTextField);
-        this.erosionTextField = new SelfHighlightningValidatingTextField("25", 4);
-        this.erosionTextField.addValidator(new FloatStringInputValidator());
+        this.erosionTextField = new SelfHighlightningValidatingTextField("3", 4);
+        this.erosionTextField.addValidator(new IntegerStringInputValidator());
         final JLabel erosionLabel = new JLabel(new DirectI18N("Erosion:").toString());
         erosionLabel.setForeground(Color.WHITE);
         generationPanel.add(erosionLabel);
         generationPanel.add(this.erosionTextField);
+        this.boulderDensityTextField = new SelfHighlightningValidatingTextField("0.01", 4);
+        this.boulderDensityTextField.addValidator(new FloatStringInputValidator());
+        final JLabel boulderDensityLabel = new JLabel(new DirectI18N("Boulders:").toString());
+        boulderDensityLabel.setForeground(Color.WHITE);
+        generationPanel.add(boulderDensityLabel);
+        generationPanel.add(this.boulderDensityTextField);
         generationPanel.add(generateTerrainButton());
         return generationPanel;
     }
@@ -200,10 +208,11 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
                             return;
                         }
                         final int dimension = Integer.parseInt(TerrainGeneratorMainFrame.this.dimensionTextField.getText());
-                        final float roughness = Float.parseFloat(TerrainGeneratorMainFrame.this.roughnessTextField.getText());
-                        final float elevation = Float.parseFloat(TerrainGeneratorMainFrame.this.elevationTextField.getText());
+                        final double roughness = Double.parseDouble(TerrainGeneratorMainFrame.this.roughnessTextField.getText());
+                        final double elevation = Double.parseDouble(TerrainGeneratorMainFrame.this.elevationTextField.getText());
                         final int erosion = Integer.parseInt(TerrainGeneratorMainFrame.this.erosionTextField.getText());
-                        TerrainGeneratorMainFrame.this.session.getEventBus().publish(new GenerateTerrainEvent(dimension, roughness, elevation, erosion));
+                        final double boulders = Double.parseDouble(TerrainGeneratorMainFrame.this.boulderDensityTextField.getText());
+                        TerrainGeneratorMainFrame.this.session.getEventBus().publish(new GenerateTerrainEvent(dimension, roughness, elevation, erosion, boulders));
                     }
                 });
             }
@@ -249,7 +258,7 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
         }
     }
 
-    public void setHeightMap(final HeightMap heightMap) {
+    public void setHeightMap(final SurfaceMap heightMap) {
         EDT.performBlocking(new Runnable() {
 
             @Override

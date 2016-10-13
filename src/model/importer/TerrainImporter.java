@@ -9,18 +9,18 @@ import controller.events.ImportTerrainEvent;
 import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.application.session.SessionBasedObject;
 import hochberger.utilities.eventbus.EventReceiver;
-import model.HeightMap;
+import model.SurfaceMap;
 
 public abstract class TerrainImporter extends SessionBasedObject implements EventReceiver<ImportTerrainEvent> {
 
-    private HeightMap map;
+    private SurfaceMap map;
 
     public TerrainImporter(final BasicSession session) {
         super(session);
-        this.map = new HeightMap(0);
+        this.map = new SurfaceMap(0);
     }
 
-    public abstract HeightMap importTerrain(File file) throws IOException;
+    public abstract SurfaceMap importTerrain(File file) throws IOException;
 
     @Override
     public void receive(final ImportTerrainEvent event) {

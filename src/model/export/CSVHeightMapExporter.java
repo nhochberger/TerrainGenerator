@@ -7,7 +7,7 @@ import java.io.IOException;
 import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.application.session.SessionBasedObject;
 import hochberger.utilities.files.Closer;
-import model.HeightMap;
+import model.SurfaceMap;
 
 public class CSVHeightMapExporter extends SessionBasedObject implements HeightMapExporter {
 
@@ -18,7 +18,7 @@ public class CSVHeightMapExporter extends SessionBasedObject implements HeightMa
     }
 
     @Override
-    public void export(final HeightMap heightMap, final String filePath) {
+    public void export(final SurfaceMap heightMap, final String filePath) {
         final int numOfPoints = heightMap.getXDimension() * heightMap.getZDimension();
         final StringBuffer buffer = new StringBuffer();
         for (int z = 0; z < heightMap.getZDimension(); z++) {

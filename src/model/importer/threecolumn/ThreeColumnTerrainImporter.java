@@ -8,7 +8,7 @@ import java.util.List;
 
 import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.geo.GeoPoint;
-import model.HeightMap;
+import model.SurfaceMap;
 import model.importer.TerrainImporter;
 
 public class ThreeColumnTerrainImporter extends TerrainImporter {
@@ -18,8 +18,8 @@ public class ThreeColumnTerrainImporter extends TerrainImporter {
     }
 
     @Override
-    public HeightMap importTerrain(final File file) throws IOException {
-        HeightMap map = new HeightMap(0);
+    public SurfaceMap importTerrain(final File file) throws IOException {
+        SurfaceMap map = new SurfaceMap(0);
         final List<String> lines = Files.readAllLines(file.toPath());
         final List<Double> lats = new LinkedList<>();
         final List<Double> lons = new LinkedList<>();
@@ -48,7 +48,7 @@ public class ThreeColumnTerrainImporter extends TerrainImporter {
                 zMax = metricGridPoint.getZ();
             }
         }
-        map = new HeightMap((int) Math.max(xMax, zMax) + 1);
+        map = new SurfaceMap((int) Math.max(xMax, zMax) + 1);
         logger().info("Interpolating elevation of points in grid. This may take several minutes.");
         for (int z = 0; z < map.getZDimension(); z++) {
             for (int x = 0; x < map.getXDimension(); x++) {

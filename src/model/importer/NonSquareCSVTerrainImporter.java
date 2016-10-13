@@ -6,7 +6,7 @@ import java.nio.file.Files;
 import java.util.List;
 
 import hochberger.utilities.application.session.BasicSession;
-import model.HeightMap;
+import model.SurfaceMap;
 
 public class NonSquareCSVTerrainImporter extends TerrainImporter {
 
@@ -17,11 +17,11 @@ public class NonSquareCSVTerrainImporter extends TerrainImporter {
     }
 
     @Override
-    public HeightMap importTerrain(final File file) throws IOException {
+    public SurfaceMap importTerrain(final File file) throws IOException {
         final List<String> lines = Files.readAllLines(file.toPath());
         final int zDimension = lines.size();
         int xDimension = 0;
-        final HeightMap map = new HeightMap(zDimension);
+        final SurfaceMap map = new SurfaceMap(zDimension);
         for (int z = 0; z < zDimension; z++) {
             final String line = lines.get(z);
             final String[] split = line.split(DELIMITER);

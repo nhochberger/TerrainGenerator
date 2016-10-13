@@ -20,7 +20,7 @@ import com.jogamp.opengl.util.texture.TextureIO;
 
 import hochberger.utilities.application.ResourceLoader;
 import hochberger.utilities.threading.ThreadRunner;
-import model.HeightMap;
+import model.SurfaceMap;
 
 public class TerrainVisualization implements GLEventListener {
 
@@ -35,13 +35,13 @@ public class TerrainVisualization implements GLEventListener {
     private String screenshotFilePath;
     // NOTE: break encapsulation for performance reasons
     protected Texture texture;
-    protected HeightMap points;
+    protected SurfaceMap points;
     protected final double scalingFactor;
 
     public TerrainVisualization() {
         super();
         this.glu = new GLU();
-        this.points = new HeightMap(0);
+        this.points = new SurfaceMap(0);
         this.takeScreenshotWithNextRender = false;
         this.scalingFactor = 1d;
     }
@@ -288,7 +288,7 @@ public class TerrainVisualization implements GLEventListener {
         this.yTranslation = yTranslation;
     }
 
-    public void setPoints(final HeightMap points) {
+    public void setPoints(final SurfaceMap points) {
         this.points = points;
     }
 
