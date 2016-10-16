@@ -85,7 +85,7 @@ public class TriangleBasedTerrainVisualization extends TerrainVisualization {
         }
         for (int z = 0; z < this.points.getZDimension(); z++) {
             for (int x = 0; x < this.points.getXDimension(); x++) {
-                calculateFor(z, x);
+                calculateFor(x, z);
             }
         }
 
