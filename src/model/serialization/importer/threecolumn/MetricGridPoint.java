@@ -1,4 +1,4 @@
-package model.importer.threecolumn;
+package model.serialization.importer.threecolumn;
 
 public class MetricGridPoint {
 

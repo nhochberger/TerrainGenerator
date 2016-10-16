@@ -1,4 +1,4 @@
-package model.importer;
+package model.serialization.importer;
 
 import java.io.File;
 import java.io.IOException;

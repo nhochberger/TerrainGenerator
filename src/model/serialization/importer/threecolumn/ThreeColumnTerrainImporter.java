@@ -1,4 +1,4 @@
-package model.importer.threecolumn;
+package model.serialization.importer.threecolumn;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,7 +9,7 @@ import java.util.List;
 import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.geo.GeoPoint;
 import model.SurfaceMap;
-import model.importer.TerrainImporter;
+import model.serialization.importer.TerrainImporter;
 
 public class ThreeColumnTerrainImporter extends TerrainImporter {
 

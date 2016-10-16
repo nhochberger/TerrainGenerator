@@ -39,7 +39,7 @@ public class NaturalSurfaceDiamondSquareGenerator extends SessionBasedObject imp
             final double radius = 0.1d + random.nextDouble() * 0.6d;
             final double y = ((surface.get(xInt, zInt) + surface.get(xInt + 1, zInt) + surface.get(xInt, zInt + 1) + surface.get(xInt + 1, zInt + 1)) / 4d) + radius * (3d / 5d);
             surface.addBoulder(new Boulder(x, y, z, radius));
-            if (0 == i % 100) {
+            if (0 == i % 100 || i + 1 == amount) {
                 session().getEventBus().publish(new TerrainGenerationProgressEvent(new DirectI18N("Boulders"), 100 * (int) ((float) i + 1) / amount));
             }
         }

@@ -1,4 +1,4 @@
-package model.export;
+package model.serialization.exporter;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -7,11 +7,11 @@ import java.io.IOException;
 import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.application.session.SessionBasedObject;
 import hochberger.utilities.files.Closer;
+import model.Boulder;
 import model.SurfaceMap;
+import model.serialization.SerializationConstants;
 
 public class CSVHeightMapExporter extends SessionBasedObject implements HeightMapExporter {
-
-    private static String DELIMITER = ", ";
 
     public CSVHeightMapExporter(final BasicSession session) {
         super(session);
@@ -24,11 +24,26 @@ public class CSVHeightMapExporter extends SessionBasedObject implements HeightMa
         for (int z = 0; z < heightMap.getZDimension(); z++) {
             for (int x = 0; x < heightMap.getXDimension(); x++) {
                 buffer.append(heightMap.get(x, z));
-                buffer.append(DELIMITER);
+                buffer.append(SerializationConstants.VALUE_DELIMITER);
             }
             buffer.append(System.lineSeparator());
         }
         logger().info("Exporting " + numOfPoints + " elevation points (" + buffer.length() + " byte) to " + filePath);
+        logger().info("Beginning to export " + heightMap.getBoulders().size() + " obstacles");
+        buffer.append(SerializationConstants.SECTION_DELIMITER);
+        buffer.append(System.lineSeparator());
+        for (final Boulder boulder : heightMap.getBoulders()) {
+            buffer.append(boulder.getX());
+            buffer.append(SerializationConstants.VALUE_DELIMITER);
+            buffer.append(boulder.getY());
+            buffer.append(SerializationConstants.VALUE_DELIMITER);
+            buffer.append(boulder.getZ());
+            buffer.append(SerializationConstants.VALUE_DELIMITER);
+            buffer.append(boulder.getRadius());
+            buffer.append(SerializationConstants.VALUE_DELIMITER);
+            buffer.append(System.lineSeparator());
+        }
+
         FileWriter writer = null;
         try {
             writer = new FileWriter(new File(filePath));

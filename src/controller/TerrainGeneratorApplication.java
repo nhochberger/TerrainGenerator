@@ -8,10 +8,10 @@ import hochberger.utilities.application.ApplicationShutdownEventReceiver;
 import hochberger.utilities.application.BasicLoggedApplication;
 import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.eventbus.SimpleEventBus;
-import model.NaturalSurfaceDiamondSquareGenerator;
 import model.HeightMapGenerator;
-import model.export.CSVHeightMapExporter;
-import model.importer.NonSquareCSVTerrainImporter;
+import model.NaturalSurfaceDiamondSquareGenerator;
+import model.serialization.exporter.CSVHeightMapExporter;
+import model.serialization.importer.CSVTerrainImporter;
 import view.TerrainGeneratorGui;
 
 public class TerrainGeneratorApplication extends BasicLoggedApplication {
@@ -47,7 +47,7 @@ public class TerrainGeneratorApplication extends BasicLoggedApplication {
         logger().info("TerrainGenerator " + this.session.getProperties().version());
         this.session.getEventBus().register(new ApplicationShutdownEventReceiver(this.session, this), ApplicationShutdownEvent.class);
         this.session.getEventBus().register(new GenerateTerrainEventForwarder(this.session, this.generator), GenerateTerrainEvent.class);
-        this.session.getEventBus().register(new NonSquareCSVTerrainImporter(this.session), ImportTerrainEvent.class);
+        this.session.getEventBus().register(new CSVTerrainImporter(this.session), ImportTerrainEvent.class);
         this.exportHandler.start();
         this.gui.activate();
     }

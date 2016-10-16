@@ -8,7 +8,7 @@ import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.application.session.SessionBasedObject;
 import hochberger.utilities.eventbus.EventReceiver;
 import model.SurfaceMap;
-import model.export.HeightMapExporter;
+import model.serialization.exporter.HeightMapExporter;
 
 public class ExportTerrainEventHandler extends SessionBasedObject implements Lifecycle {
 
