@@ -65,7 +65,7 @@ public class CSVTerrainImporter extends TerrainImporter {
     }
 
     private void readObstacles(final List<String> lines, final SurfaceMap map) {
-        final int linesToSkip = map.getZDimension() + 1;
+        final int linesToSkip = map.getZDimension() + 2;
         logger().info("Importing " + (lines.size() - linesToSkip) + " obstacles");
         for (int i = 1 + linesToSkip; i < lines.size(); i++) {
             final String[] line = lines.get(i).split(SerializationConstants.VALUE_DELIMITER);
