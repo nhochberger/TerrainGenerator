@@ -31,10 +31,10 @@ public class CSVTerrainImporter extends TerrainImporter {
         int xDimension = 0;
         for (int z = 0; z < lines.size(); z++) {
             final String line = lines.get(z);
+            zDimension = z;
             if (SerializationConstants.SECTION_DELIMITER.equals(line)) {
                 break;
             }
-            zDimension = z;
             final String[] split = line.split(SerializationConstants.VALUE_DELIMITER);
             if (xDimension <= split.length) {
                 xDimension = split.length;
