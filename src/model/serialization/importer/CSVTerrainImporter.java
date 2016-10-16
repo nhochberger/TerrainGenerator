@@ -31,11 +31,15 @@ public class CSVTerrainImporter extends TerrainImporter {
         logger().info("Importing " + (lines.size() - linesToSkip) + " obstacles");
         for (int i = 0 + linesToSkip; i < lines.size(); i++) {
             final String[] line = lines.get(i).split(SerializationConstants.VALUE_DELIMITER);
-            final double x = Double.parseDouble(line[0]);
-            final double y = Double.parseDouble(line[1]);
-            final double z = Double.parseDouble(line[2]);
-            final double r = Double.parseDouble(line[3]);
-            map.addBoulder(new Boulder(x, y, z, r));
+            try {
+                final double x = Double.parseDouble(line[0]);
+                final double y = Double.parseDouble(line[1]);
+                final double z = Double.parseDouble(line[2]);
+                final double r = Double.parseDouble(line[3]);
+                map.addBoulder(new Boulder(x, y, z, r));
+            } catch (final NumberFormatException e) {
+                logger().error("Error while importing obstacle. Skipping this entry", e);
+            }
         }
         logger().info("Obstacle import finished");
     }
