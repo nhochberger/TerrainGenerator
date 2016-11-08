@@ -3,7 +3,7 @@ package model;
 public class Boulder {
 
     private final double x;
-    private final double y;
+    private double y;
     private final double z;
     private final double radius;
 
@@ -29,6 +29,10 @@ public class Boulder {
 
     public double getRadius() {
         return this.radius;
+    }
+
+    public void adjustY(final double y) {
+        this.y = y;
     }
 
     @Override
