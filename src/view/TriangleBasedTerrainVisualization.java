@@ -25,8 +25,8 @@ public class TriangleBasedTerrainVisualization extends TerrainVisualization {
     protected void drawSurface(final GL2 gl) {
         gl.glBegin(GL2.GL_TRIANGLES);
         final TextureCoords coords = this.texture.getImageTexCoords();
-        for (int z = 0; z < this.points.getZDimension() - 1; z++) {
-            for (int x = 0; x < this.points.getXDimension() - 1; x++) {
+        for (int z = 1; z < this.points.getZDimension() - 2; z++) {
+            for (int x = 1; x < this.points.getXDimension() - 2; x++) {
 
                 gl.glTexCoord2d(coords.bottom(), coords.left());
                 gl.glNormal3f(this.vertexNormals[x][z][0], this.vertexNormals[x][z][1], this.vertexNormals[x][z][2]);
