@@ -20,6 +20,7 @@ public class TerrainGeneratorApplication extends BasicLoggedApplication {
     private final TerrainGeneratorGui gui;
     private final HeightMapGenerator generator;
     private final ExportTerrainEventHandler exportHandler;
+    private final ExistingDemManipulationHandler demManipulationHandler;
 
     public static void main(final String[] args) {
         setUpLoggingServices(TerrainGeneratorApplication.class);
@@ -36,9 +37,9 @@ public class TerrainGeneratorApplication extends BasicLoggedApplication {
     public TerrainGeneratorApplication(final ApplicationProperties applicationProperties) {
         this.session = new BasicSession(applicationProperties, new SimpleEventBus(), getLogger());
         this.gui = new TerrainGeneratorGui(this.session);
-        // this.generator = new DiamondSquareGenerator(this.session);
         this.generator = new NaturalSurfaceDiamondSquareGenerator(this.session);
         this.exportHandler = new ExportTerrainEventHandler(this.session, new CSVHeightMapExporter(this.session));
+        this.demManipulationHandler = new ExistingDemManipulationHandler(this.session);
     }
 
     @Override
@@ -49,11 +50,13 @@ public class TerrainGeneratorApplication extends BasicLoggedApplication {
         this.session.getEventBus().register(new GenerateTerrainEventForwarder(this.session, this.generator), GenerateTerrainEvent.class);
         this.session.getEventBus().register(new CSVTerrainImporter(this.session), ImportTerrainEvent.class);
         this.exportHandler.start();
+        this.demManipulationHandler.start();
         this.gui.activate();
     }
 
     @Override
     public void stop() {
+        this.demManipulationHandler.stop();
         this.exportHandler.stop();
         this.gui.deactivate();
         super.stop();

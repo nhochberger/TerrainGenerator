@@ -1,5 +1,6 @@
 package view;
 
+import controller.events.DemManipulationFinishedEvent;
 import controller.events.ImportFinishedEvent;
 import controller.events.TerrainGeneratedEvent;
 import controller.events.TerrainGenerationProgressEvent;
@@ -57,6 +58,19 @@ public class TerrainGeneratorGui extends SessionBasedObject implements Applicati
             TerrainGeneratorGui.this.mainFrame.setStage(new DirectI18N("Waiting"));
         }
 
+    }
+
+    public class DemManipulationFinishedEventForwarder implements EventReceiver<DemManipulationFinishedEvent> {
+
+        public DemManipulationFinishedEventForwarder() {
+            super();
+        }
+
+        @Override
+        public void receive(final DemManipulationFinishedEvent event) {
+            TerrainGeneratorGui.this.mainFrame.setHeightMap(event.getSurfaceMap());
+            TerrainGeneratorGui.this.mainFrame.setStage(new DirectI18N("Waiting"));
+        }
     }
 
     public class TerrainGenerationProgressForwarder implements EventReceiver<TerrainGenerationProgressEvent> {

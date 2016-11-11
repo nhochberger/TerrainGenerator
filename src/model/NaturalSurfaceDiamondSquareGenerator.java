@@ -5,8 +5,6 @@ import hochberger.utilities.application.session.SessionBasedObject;
 
 public class NaturalSurfaceDiamondSquareGenerator extends SessionBasedObject implements HeightMapGenerator {
 
-    private static final double THRESHOLD_FACTOR = 4d;
-
     private final DiamondSquareGenerator generator;
     private final Eroder eroder;
     BoulderGenerator boulderGenerator;
@@ -14,7 +12,7 @@ public class NaturalSurfaceDiamondSquareGenerator extends SessionBasedObject imp
     public NaturalSurfaceDiamondSquareGenerator(final BasicSession session) {
         super(session);
         this.generator = new DiamondSquareGenerator(session);
-        this.eroder = new Eroder(session, THRESHOLD_FACTOR);
+        this.eroder = new Eroder(session);
         this.boulderGenerator = new BoulderGenerator(session);
     }
 

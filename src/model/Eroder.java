@@ -9,11 +9,10 @@ import hochberger.utilities.text.i18n.DirectI18N;
 
 public class Eroder extends SessionBasedObject {
 
-    private final double threshold;
+    private static final double THRESHOLD_FACTOR = 4d;
 
-    public Eroder(final BasicSession session, final double threshold) {
+    public Eroder(final BasicSession session) {
         super(session);
-        this.threshold = threshold;
     }
 
     public void erode(final SurfaceMap originalMap, final int iterations) {
@@ -34,7 +33,7 @@ public class Eroder extends SessionBasedObject {
                             }
                         }
                     }
-                    if (2 * this.threshold / (originalMap.getXDimension() + originalMap.getZDimension()) < maxD) {
+                    if (2 * THRESHOLD_FACTOR / (originalMap.getXDimension() + originalMap.getZDimension()) < maxD) {
                         originalMap.set(x, z, originalMap.get(x, z) - (maxD / 2d));
                         originalMap.set(maxX, maxZ, originalMap.get(maxX, maxZ) + (maxD / 2d));
                     }

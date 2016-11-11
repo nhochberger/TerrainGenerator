@@ -21,7 +21,9 @@ import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.FPSAnimator;
 
+import controller.events.ErodeTerrainEvent;
 import controller.events.ExportTerrainEvent;
+import controller.events.GenerateBouldersEvent;
 import controller.events.GenerateTerrainEvent;
 import controller.events.ImportTerrainEvent;
 import edt.EDT;
@@ -92,8 +94,8 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
     private JPanel controllPanel() {
         final JPanel controllPanel = new JPanel();
         controllPanel.setOpaque(false);
-        final JPanel generationPanel = generationPanel();
-        controllPanel.add(generationPanel);
+        controllPanel.add(generationPanel());
+        controllPanel.add(modificationPanel());
         final JButton exportButton = new JButton(new DirectI18N("Export...").toString());
         exportButton.addActionListener(new ActionListener() {
 
@@ -140,6 +142,28 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
         });
         controllPanel.add(takeScreenshotButton);
         return controllPanel;
+    }
+
+    private JPanel modificationPanel() {
+        final JPanel panel = new JPanel();
+        panel.setOpaque(false);
+        final JButton erosionButton = new JButton(new DirectI18N("Erode").toString());
+        erosionButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                TerrainGeneratorMainFrame.this.session.getEventBus().publishFromEDT(new ErodeTerrainEvent(Integer.parseInt(TerrainGeneratorMainFrame.this.erosionTextField.getText())));
+            }
+        });
+        panel.add(erosionButton);
+        final JButton boulderButton = new JButton(new DirectI18N("Distribute Boulders").toString());
+        boulderButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(final ActionEvent e) {
+                TerrainGeneratorMainFrame.this.session.getEventBus().publishFromEDT(new GenerateBouldersEvent(Double.parseDouble(TerrainGeneratorMainFrame.this.boulderDensityTextField.getText())));
+            }
+        });
+        panel.add(boulderButton);
+        return panel;
     }
 
     private JPanel generationPanel() {

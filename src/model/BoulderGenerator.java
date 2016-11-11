@@ -14,6 +14,7 @@ public class BoulderGenerator extends SessionBasedObject {
     }
 
     public void generateAndDistributeBoulders(final SurfaceMap originalMap, final double boulderAmountFactor) {
+        originalMap.getBoulders().clear();
         final int amount = (int) (boulderAmountFactor * originalMap.getXDimension() * originalMap.getZDimension());
         logger().info("Generating " + amount + " boulders");
         final Random random = new Random();

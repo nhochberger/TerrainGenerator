@@ -1,5 +1,6 @@
 package controller;
 
+import controller.events.DemManipulationFinishedEvent;
 import controller.events.ExportTerrainEvent;
 import controller.events.ImportFinishedEvent;
 import controller.events.TerrainGeneratedEvent;
@@ -25,12 +26,25 @@ public class ExportTerrainEventHandler extends SessionBasedObject implements Lif
         logger().info("Starting ExportTerrainEventHandler");
         session().getEventBus().register(new TerrainGeneratedEventForwarder(), TerrainGeneratedEvent.class);
         session().getEventBus().register(new TerrainImportedEventForwarder(), ImportFinishedEvent.class);
+        session().getEventBus().register(new DemManipulationFinishedEventForwarder(), DemManipulationFinishedEvent.class);
         session().getEventBus().register(new ExportTerrainEventForwarder(), ExportTerrainEvent.class);
     }
 
     @Override
     public void stop() {
         logger().info("ExportTerrainEventHandler stopped");
+    }
+
+    private final class DemManipulationFinishedEventForwarder implements EventReceiver<DemManipulationFinishedEvent> {
+
+        public DemManipulationFinishedEventForwarder() {
+            super();
+        }
+
+        @Override
+        public void receive(final DemManipulationFinishedEvent event) {
+            ExportTerrainEventHandler.this.heightMap = event.getSurfaceMap();
+        }
     }
 
     private final class TerrainImportedEventForwarder implements EventReceiver<ImportFinishedEvent> {
