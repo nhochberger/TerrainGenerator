@@ -1,5 +1,6 @@
 package controller;
 
+import controller.events.DemManipulationFinishedEvent;
 import controller.events.ErodeTerrainEvent;
 import controller.events.GenerateBouldersEvent;
 import controller.events.ImportFinishedEvent;
@@ -84,6 +85,7 @@ public class ExistingDemManipulationHandler extends SessionBasedObject implement
         @Override
         public void receive(final ErodeTerrainEvent event) {
             ExistingDemManipulationHandler.this.eroder.erode(ExistingDemManipulationHandler.this.map, event.getIterations());
+            session().getEventBus().publish(new DemManipulationFinishedEvent(ExistingDemManipulationHandler.this.map));
         }
     }
 }

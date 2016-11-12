@@ -27,6 +27,7 @@ public class TerrainGeneratorGui extends SessionBasedObject implements Applicati
         session().getEventBus().register(new TerrainGenerationProgressForwarder(), TerrainGenerationProgressEvent.class);
         session().getEventBus().register(new TerrainGeneratedEventForwarder(), TerrainGeneratedEvent.class);
         session().getEventBus().register(new TerrainImportedEventForwarder(), ImportFinishedEvent.class);
+        session().getEventBus().register(new DemManipulationFinishedEventForwarder(), DemManipulationFinishedEvent.class);
     }
 
     @Override
