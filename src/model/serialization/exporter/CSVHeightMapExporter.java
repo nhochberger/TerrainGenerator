@@ -3,6 +3,9 @@ package model.serialization.exporter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
 import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.application.session.SessionBasedObject;
@@ -19,11 +22,13 @@ public class CSVHeightMapExporter extends SessionBasedObject implements HeightMa
 
     @Override
     public void export(final SurfaceMap heightMap, final String filePath) {
+        final DecimalFormat formatter = new DecimalFormat("#.####");
+        formatter.setDecimalFormatSymbols(DecimalFormatSymbols.getInstance(Locale.US));
         final int numOfPoints = heightMap.getXDimension() * heightMap.getZDimension();
         final StringBuffer buffer = new StringBuffer();
         for (int z = 0; z < heightMap.getZDimension(); z++) {
             for (int x = 0; x < heightMap.getXDimension(); x++) {
-                buffer.append(heightMap.get(x, z));
+                buffer.append(formatter.format(heightMap.get(x, z)));
                 buffer.append(SerializationConstants.VALUE_DELIMITER);
             }
             buffer.append(System.lineSeparator());
@@ -33,17 +38,16 @@ public class CSVHeightMapExporter extends SessionBasedObject implements HeightMa
         buffer.append(SerializationConstants.SECTION_DELIMITER);
         buffer.append(System.lineSeparator());
         for (final Boulder boulder : heightMap.getBoulders()) {
-            buffer.append(boulder.getX());
+            buffer.append(formatter.format(boulder.getX()));
             buffer.append(SerializationConstants.VALUE_DELIMITER);
-            buffer.append(boulder.getY());
+            buffer.append(formatter.format(boulder.getY()));
             buffer.append(SerializationConstants.VALUE_DELIMITER);
-            buffer.append(boulder.getZ());
+            buffer.append(formatter.format(boulder.getZ()));
             buffer.append(SerializationConstants.VALUE_DELIMITER);
-            buffer.append(boulder.getRadius());
+            buffer.append(formatter.format(boulder.getRadius()));
             buffer.append(SerializationConstants.VALUE_DELIMITER);
             buffer.append(System.lineSeparator());
         }
-
         FileWriter writer = null;
         try {
             writer = new FileWriter(new File(filePath));

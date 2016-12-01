@@ -36,7 +36,7 @@ public class NonSquareCSVTerrainImporter extends TerrainImporter {
             for (int x = 0; x < xDimension; x++) {
                 final String elevation = split[x];
                 try {
-                    map.set(x, z, Float.parseFloat(elevation));
+                    map.set(x, z, Double.parseDouble(elevation));
                 } catch (final NumberFormatException e) {
                     map.set(xDimension, z, 0d);
                 }

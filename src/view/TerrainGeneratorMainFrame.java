@@ -92,9 +92,9 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
     }
 
     private JPanel controllPanel() {
-        final JPanel controllPanel = new JPanel();
+        final JPanel controllPanel = new JPanel(new MigLayout());
         controllPanel.setOpaque(false);
-        controllPanel.add(generationPanel());
+        controllPanel.add(generationPanel(), "span 5, wrap");
         controllPanel.add(modificationPanel());
         final JButton exportButton = new JButton(new DirectI18N("Export...").toString());
         exportButton.addActionListener(new ActionListener() {
