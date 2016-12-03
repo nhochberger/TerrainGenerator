@@ -7,6 +7,13 @@ import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.application.session.SessionBasedObject;
 import hochberger.utilities.text.i18n.DirectI18N;
 
+/**
+ *
+ * Example implementation of {@link HeightMapGenerator}. Simply fills the terrain with random elevations.
+ *
+ * @author Nico Hochberger
+ *
+ */
 public class CompletelyRandomGenerator extends SessionBasedObject implements HeightMapGenerator {
 
     public CompletelyRandomGenerator(final BasicSession session) {
