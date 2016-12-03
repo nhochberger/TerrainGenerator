@@ -9,20 +9,20 @@ import hochberger.utilities.application.Lifecycle;
 import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.application.session.SessionBasedObject;
 import hochberger.utilities.eventbus.EventReceiver;
-import model.BoulderGenerator;
 import model.Eroder;
+import model.ObstacleGenerator;
 import model.SurfaceMap;
 
 public class ExistingDemManipulationHandler extends SessionBasedObject implements Lifecycle {
 
     private final Eroder eroder;
-    private final BoulderGenerator boulderGenerator;
+    private final ObstacleGenerator obstacleGenerator;
     private SurfaceMap map;
 
-    public ExistingDemManipulationHandler(final BasicSession session) {
+    public ExistingDemManipulationHandler(final BasicSession session, final Eroder eroder, final ObstacleGenerator obstacleGenerator) {
         super(session);
-        this.eroder = new Eroder(session());
-        this.boulderGenerator = new BoulderGenerator(session());
+        this.eroder = eroder;
+        this.obstacleGenerator = obstacleGenerator;
         this.map = new SurfaceMap(0);
     }
 
@@ -72,7 +72,7 @@ public class ExistingDemManipulationHandler extends SessionBasedObject implement
 
         @Override
         public void receive(final GenerateBouldersEvent event) {
-            ExistingDemManipulationHandler.this.boulderGenerator.generateAndDistributeBoulders(ExistingDemManipulationHandler.this.map, event.getBoulderAmountFactor());
+            ExistingDemManipulationHandler.this.obstacleGenerator.generateAndDistributeObstacles(ExistingDemManipulationHandler.this.map, event.getBoulderAmountFactor());
         }
     }
 

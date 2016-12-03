@@ -5,12 +5,12 @@ import hochberger.utilities.application.session.BasicSession;
 public class NaturalSurfaceDiamondSquareGenerator extends DiamondSquareGenerator {
 
     private final Eroder eroder;
-    BoulderGenerator boulderGenerator;
+    ObstacleGenerator obstacleGenerator;
 
-    public NaturalSurfaceDiamondSquareGenerator(final BasicSession session) {
+    public NaturalSurfaceDiamondSquareGenerator(final BasicSession session, final Eroder eroder, final ObstacleGenerator obstacleGenerator) {
         super(session);
-        this.eroder = new Eroder(session);
-        this.boulderGenerator = new BoulderGenerator(session);
+        this.eroder = eroder;
+        this.obstacleGenerator = obstacleGenerator;
     }
 
     @Override
@@ -18,7 +18,7 @@ public class NaturalSurfaceDiamondSquareGenerator extends DiamondSquareGenerator
         final SurfaceMap surface = super.generate(dimension, roughness, elevation, erosion, boulderAmountFactor);
         logger().info("Fractal base surface generated");
         this.eroder.erode(surface, erosion);
-        this.boulderGenerator.generateAndDistributeBoulders(surface, boulderAmountFactor);
+        this.obstacleGenerator.generateAndDistributeObstacles(surface, boulderAmountFactor);
         return surface;
     }
 }

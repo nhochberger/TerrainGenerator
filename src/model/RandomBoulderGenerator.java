@@ -7,13 +7,14 @@ import hochberger.utilities.application.session.BasicSession;
 import hochberger.utilities.application.session.SessionBasedObject;
 import hochberger.utilities.text.i18n.DirectI18N;
 
-public class BoulderGenerator extends SessionBasedObject {
+public class RandomBoulderGenerator extends SessionBasedObject implements ObstacleGenerator {
 
-    public BoulderGenerator(final BasicSession session) {
+    public RandomBoulderGenerator(final BasicSession session) {
         super(session);
     }
 
-    public void generateAndDistributeBoulders(final SurfaceMap originalMap, final double boulderAmountFactor) {
+    @Override
+    public void generateAndDistributeObstacles(final SurfaceMap originalMap, final double boulderAmountFactor) {
         originalMap.getBoulders().clear();
         final int amount = (int) (boulderAmountFactor * originalMap.getXDimension() * originalMap.getZDimension());
         logger().info("Generating " + amount + " boulders");
