@@ -58,7 +58,7 @@ public class TerrainGeneratorMainFrame extends EDTSafeFrame {
     public TerrainGeneratorMainFrame(final BasicSession session) {
         super(session.getProperties().title() + Text.space() + session.getProperties().version());
         this.session = session;
-        this.animator = new FPSAnimator(30);
+        this.animator = new FPSAnimator(15);
     }
 
     @Override

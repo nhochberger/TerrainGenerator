@@ -20,8 +20,8 @@ public class RandomBoulderGenerator extends SessionBasedObject implements Obstac
         logger().info("Generating " + amount + " boulders");
         final Random random = new Random();
         for (int i = 0; i < amount; i++) {
-            final double x = random.nextDouble() * originalMap.getXDimension() - 1;
-            final double z = random.nextDouble() * originalMap.getZDimension() - 1;
+            final double x = 1 + random.nextDouble() * (originalMap.getXDimension() - 2);
+            final double z = 1 + random.nextDouble() * (originalMap.getZDimension() - 2);
             final int xInt = (int) x;
             final int zInt = (int) z;
             final double radius = 0.1d + random.nextDouble() * 0.6d;

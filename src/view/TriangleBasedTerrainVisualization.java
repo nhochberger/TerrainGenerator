@@ -109,7 +109,7 @@ public class TriangleBasedTerrainVisualization extends TerrainVisualization {
         this.vertexNormals[x][z][1] *= Math.sqrt(sum);
         this.vertexNormals[x][z][2] *= Math.sqrt(sum);
     }
-
+    //
     // @Override
     // protected void drawWater(final GL2 gl) {
     // gl.glPushMatrix();
